@@ -1,0 +1,70 @@
+---
+title: "Factors in R (forcats)"
+output: html_notebook
+---
+
+```{r}
+# install package if needed 
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+```
+
+```{r}
+# Import libraries
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+
+```
+
+```{r}
+# Create factors 
+
+x1 = c('Dec', 'Apr', 'Jan', 'Mar')
+x2 = c('Dec', 'Apr', 'Apr', 'Apr', 'Jan', 'Mar')
+
+month_levels = c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+
+y1 = factor(x1, levels = month_levels)
+sort(y1)
+y2 = factor(x2, levels = c('Dec', 'Apr', 'Jan', 'Mar'))
+sort(y2)
+
+```
+
+```{r}
+# Inspect Factors
+
+fct_count(y1)
+
+f1 = factor(c('a', 'c'))
+f2 = factor(c('b', 'a'))
+fct_c(f1, f2)
+
+fct_unify(list(f2, f1))
+
+
+```
+
+
+```{r}
+# Change the Order of Levels
+
+y2
+fct_relevel(y2, c('Jan', 'Mar', 'Apr', 'Dec'))
+sort(fct_relevel(y2, c('Jan', 'Mar', 'Apr', 'Dec')))
+
+fct_infreq(y2)
+
+fct_inorder(y2)
+
+fct_rev(y2)
+
+y2
+fct_shift(y2)
+
+fct_shuffle(y1)
+
+```
+
+

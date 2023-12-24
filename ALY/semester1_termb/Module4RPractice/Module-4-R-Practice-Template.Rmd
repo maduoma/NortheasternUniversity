@@ -1,0 +1,154 @@
+---
+title: "Module-4-R-Practice-Template.Rmd"
+output: html_document
+---
+
+```{r}
+# Install the libraries if needed
+
+# install package if needed 
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+# install.packages('dplyr')
+
+# Load R packages
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+
+```
+
+```{r}
+# Answer each question in the assignment using R. 
+
+# This assignment is based on code covered in class. Some questions build on old code. Some questions require you to use new functions by looking up the R documentation. There is more than one way to answer a question. 
+
+# The lab will be graded after the due date. The attempt with the highest score will be kept.
+
+
+```
+
+
+```{r}
+# 1. A random sample of 100 observations from one population revealed a sample mean of 23 and a sample standard deviation of 4. A random sample of 80 observations from another population revealed a sample mean of 26 and a sample standard deviation of 5. Use the 0.95 confidence level. Conduct a two-sample t-test to test the hypothesis that the 2 population means are different. 
+
+# Answer the questions below. 
+
+# a. State the null and alternative hypotheses. 
+
+# b. Is this a one-sided or two-sided test? 
+
+# c. What is the value of the test statistic? Create the data with the specified statistics using the code below. Then use the t.test() function. Round the answer to nearest 2 decimals. 
+
+set.seed(100) # set.seed() will generate the same random sample each time
+
+# Data in two numeric vectors
+sample1 = data.frame(sample = rep(1, 100), variable = rnorm(100, mean = 23, sd = 4))
+sample2 = data.frame(sample = rep(2, 80), variable = rnorm(80, mean = 26, sd = 5))
+
+df = rbind(sample1, sample2)
+
+# d. What is the p-value of the hypothesis test? 
+
+
+```
+
+```{r}
+# 2. In the question above, can you conclude that the 2 population means are different at the 95% confidence level?
+
+
+```
+
+```{r}
+# 3. A recent study compared the time spent together by single- and dual-earner couples. According to the records kept by the wives during the study, the mean amount of time spent together watching television among the single-earner couples was 61 minutes per day, with a standard deviation of 15.5 minutes. For the dual-earner couples, the mean number of minutes spent watching television was 48.4 minutes, with a standard deviation of 18.1 minutes. There were 15 single-earner and 12 dual-earner couples sampled. At the 95% confidence level, run a two-sample t-test to test if the population mean of time spent watching television together by single-earner couples is greater than that of dual-earner couples. 
+
+# Use set.seed(100) to generated the data as in Q1.
+
+# Answer the questions below. 
+
+# a. State the null and alternative hypotheses. 
+
+# b. Is this a one-sided or two-sided test? 
+
+# c. What is the value of the test statistic? Round the answer to nearest 2 decimals. 
+
+# d. What is the p-value of the hypothesis test? 
+
+
+```
+
+```{r}
+# 4. In the question above, can you conclude that single-earner couples on average spend more time watching television together at the 95% confidence level?
+
+
+```
+
+```{r}
+# 5. A random sample of 10 observations from the first population revealed a sample mean of 350 and a sample standard deviation of 12. A random sample of 15 observations from the second population revealed a sample mean of 342 and a sample standard deviation of 15. At the 95% confidence level, can you conclude that there is a difference in the 2 population means?
+
+# Use set.seed(100) to generated the data as in Q1.
+
+```
+
+
+```{r}
+# 6. A recent survey compared the costs of adoption through public and private agencies. For a sample of 16 adoptions through a public agency, the mean cost was $21,045, with a standard deviation of $835. For a sample of 18 adoptions through a private agency, the mean cost was $22,840, with a standard deviation of $1,545. At the 95% confidence level, can you conclude that the mean cost of adoptions by public agencies is less than private agencies? 
+
+# Use set.seed(100) to generated the data as in Q1.
+
+
+```
+
+
+
+```{r}
+# 7. As part of a study of corporate employees, the director of human resources for a company wants to compare the distance traveled to work by employees in Cincinnati and Pittsburgh. A sample of 20 Cincinnati employees showed they travel a mean of 375 miles and standard deviation of 14 miles per month. A sample of 25 Pittsburgh employees showed they travel a mean of 380 miles and standard deviation of 22 miles per month. At the 95% confidence level, can you conclude that there is a difference in the mean number of miles traveled per month between Cincinnati and Pittsburgh employees?
+
+# Use set.seed(100) to generated the data as in Q1.
+
+```
+
+```{r}
+# 8. A company developed a new shaving cream for men and test marketed the product in two cities. The sample information is reported below. In city 1, 128 out of 300 liked the shaving cream. In city 2, 149 out of 400 liked it. At the 95% confidence level, can we conclude there is a difference in the proportions that liked the new shaving cream in the two cities?
+
+
+```
+
+```{r}
+# 9. A sports analyst wants to determine if the type of court has an effect on a tennis player's performance. Using the data below on Roger Federer’s performance, conduct a chi-squared test. At the 95% confidence level, can you conclude that the type of surface has a significant association with Federer's win/loss records?
+
+#          Grass  Hard  Clay
+# Wins        94   427   185
+# Losses       5    61    37
+
+
+```
+
+```{r}
+# 10. Use the Walmart data (walmart_data.csv). These are the survey responses of a sample of Walmart customers. Run a hypothesis test to test for the difference in average rating of Walmart's quality (Walmart_Quality) and Walmart's variety (Walmart_Variety). At the 95% confidence level, can you conclude that the average rating for Walmart's quality is different from its variety?
+
+
+ 
+```
+
+
+
+```{r}
+# 11. In a report of up to 4 pages. Include the following: 
+
+# - Using the Walmart data, run two hypothesis tests, which can be any of the following: two-sample t-test for means, two-sample z-test for proportions, paired t-test, chi-squared test.
+# - For each test, state the following: 
+# - Null and alternative hypotheses 
+# - Confidence level and value of the test statistic 
+# - p-value 
+# - Conclusion of the test
+
+# In up to 300 words, describe a situation or problem from your job, everyday life, current events, etc., for which a hypothesis test in this module would be useful for decision making. Describe the business problem and stakeholders. i.e. Who (person, group, organization) would be interested in solving this business problem? Describe up to 5 variables that can be used.
+
+```
+
+```{r}
+# 12. Upload a R Markdown file with all code and visualizations used to answer all questions above. You may use the template Module-4-R-Practice-Template.Rmd. 
+
+```
+

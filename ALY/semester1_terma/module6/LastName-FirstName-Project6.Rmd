@@ -1,0 +1,256 @@
+---
+title: "LastName-FirstName-Project6.Rmd"
+output: html_document
+---
+
+
+```{r}
+cat("\014") # clears console 
+rm(list = ls()) # clears global environment 
+try(dev.off(dev.list()["RStudioGD"]), silent = TRUE) # clears plots 
+try(p_unload(p_loaded(), character.only = TRUE), silent = TRUE) # clears packages 
+options(scipen = 100) # disables scientific notation for entire R session
+
+# You should do this line only once in the entire course. 
+# install.packages("pacman") 
+
+library(pacman)
+p_load(testthat) 
+p_load(tidyverse)
+p_load(ggplot2)
+
+```
+
+# Analyzing a baseball probability distribution
+
+# In the next group of problems, consider the Boston Red Sox playing a stretch of seven games, where the probability of winning a game is 0.65 and an outcome is the number of wins during those seven games.
+
+```{r}
+# 1. What is the probability that the Red Sox will win exactly 5 games (prob1_result)?
+
+
+```
+
+```{r}
+# 2. Use data.frame() or tibble() to create a dataframe or tibble with each possible outcome and the probability of that outcome. Name your columns wins and probability (prob2_result).
+
+```
+
+
+```{r}
+# 3. What is the probability that the Red Sox will win fewer than 5 games (prob3_result)?
+
+
+```
+
+
+```{r}
+# 4. What is the probability that the Red Sox will win between 3 and 5 games inclusively (prob4_result)?
+
+
+```
+
+
+```{r}
+# 5. What is the probability of the Red Sox winning more than 4 games (prob5_result)?
+
+
+```
+
+
+```{r}
+# 6. What is the theoretical expected value of the number of wins for the Red Sox in a 7-game series (prob6_result)?
+
+
+```
+
+
+```{r}
+# 7. What is the theoretical variance of the number of wins for the Red Sox in a 7-game series (prob7_result)?
+
+
+```
+
+
+```{r}
+# 8. Use rbinom() to generate 1,000 random values for the number of wins by the Red Sox in a 7-game series. Use set.seed(10) before generating the random values.
+
+
+```
+
+
+```{r}
+# 9. Compute the sample mean of the 1,000 random values (prob9_result).
+
+
+```
+
+
+```{r}
+# 10. Compute the sample variance of the 1,000 random values (prob10_result).
+
+
+```
+
+
+# Analyzing calls in a call center
+
+# The number of calls received each hour at a call center follows a Poisson distribution averaging seven calls per employee per hour.
+
+```{r}
+# 11. What is the probability that an employee will receive exactly 6 calls in the next hour (prob11_result)?
+
+
+```
+
+
+```{r}
+# 12. What is the probability that an employee will receive 40 or fewer calls in the next 8 hours (prob12_result)?
+
+```
+
+
+```{r}
+# 13. Assuming that there are 5 employees working eight-hour shifts, what is the probability that they will meet the quota of 275 or more calls during the shift (prob13_result)?
+
+
+```
+
+
+```{r}
+# 14. If one employee is sick, what is the probability that the remaining team will still meet the quota of 275 or more calls during their shift (prob14_result)?
+
+
+```
+
+
+```{r}
+# 15. For a single employee working an 8-hour shift, how many calls are necessary for the day to be considered in the top 10% of days volume-wise (prob15_result)?
+
+
+```
+
+
+```{r}
+# 16. Use rpois() to generate 1,000 random values for the number of calls for a single employee during an 8-hour shift. Use a set.seed(15) before creating values.
+
+
+
+```
+
+
+```{r}
+# 17. Compute the sample mean of the 1,000 random values (prob17_result).
+
+
+```
+
+
+```{r}
+# 18. Compute the sample variance of the 1,000 random values (prob18_result).
+
+
+
+```
+
+# Analyzing the lifespans of light bulbs
+
+# The life spans of light bulbs at a certain manufacturing company follow a normal distribution, with a mean life span of 2,000 hours and a standard deviation of 100 hours.
+
+```{r}
+# 19. What is the percentage of light bulbs with a lifespan of between 1,800 and 2,200 hours (prob19_result)?
+
+
+```
+
+
+```{r}
+# 20. What is the percentage of light bulbs with a life span of more than 2,500 hours (prob20_result)?
+
+
+```
+
+
+```{r}
+# 21. Light bulbs that fall in the bottom 10% of life spans are considered defective and can be returned for a full refund. What is the maximum number of hours in a light bulb's life span for it to fall into the defective category? Round your result up to the nearest integer value (prob21_result)?
+
+
+```
+
+
+```{r}
+# 22. Use rnorm() to generate 10,000 random values for the life spans of manufactured light bulbs. Use set.seed(25) before generating the values. For the remaining problems, consider this the population of light bulbs.
+
+
+```
+
+
+```{r}
+# 23. Compute the population mean for the random values (prob23_result).
+
+```
+
+
+```{r}
+# 24. Compute the population standard deviation for the random values (prob24_result).
+
+
+```
+
+
+```{r}
+# 25. Take 1,000 different samples from the random values, where each sample contains 100 values. For each of the 1,000 different samples, compute the sample mean and store all 1,000 results in a vector. Use set.seed(1) before computing the samples (prob25_result).
+
+```
+
+
+```{r}
+# 26. With the result of the prior problem, create a histogram.
+
+
+```
+
+
+```{r}
+# 27. Compute the mean of the of the values from problem 25 (prob27_result).
+
+
+```
+
+# Analyzing the flipper length of penguins
+
+# From the palmerpenguins package, utilize the existing penguins data set to work on each of the problems below.
+
+```{r}
+# 28. Explore the distribution of flipper length of the Adélie penguin. What distribution does it most likely follow? Justify your decision with evidence from techniques learned in this course.
+
+
+```
+
+
+```{r}
+# 29. Explore the relationship between the flipper length and beak (bill) depth of the gentoo penguin. Justify any relationship you identify with evidence from techniques learned in this course.
+
+
+```
+
+
+```{r}
+# 30. Write up your results about the penguins in an executive summary called LastName_Project6_Report.pdf.
+
+
+```
+
+
+```{r}
+# Run this cell to check your answers 
+library(pacman)
+p_load(testthat) 
+p_load(tidyverse)
+p_load(ggplot2)
+test_file("project6_tests.R")
+
+```
+
+
+

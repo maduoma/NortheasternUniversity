@@ -1,0 +1,454 @@
+---
+title: "LastName-FirstName-Project3.Rmd"
+# output: html_document
+output: pdf_document
+---
+
+
+```{r}
+# install.packages("pacman") 
+cat("\014") # clears console 
+rm(list = ls()) # clears global environment 
+try(dev.off(dev.list()["RStudioGD"]), silent = TRUE) # clears plots 
+try(p_unload(p_loaded(), character.only = TRUE), silent = TRUE) # clears packages 
+options(scipen = 100) # disables scientific notation for entire R session
+
+# You should do this line only once in the entire course. 
+# install.packages("pacman") 
+
+library(pacman)
+p_load(testthat) 
+p_load(tidyverse)
+p_load(lubridate)
+p_load(ggplot2)
+p_load(janitor)
+
+```
+```{r}
+#0
+# 3–4 data questions to guide the exploratory data analysis:
+
+# What is the distribution of app ratings across different  categories?
+# How does the number of installs correlate with the app rating?
+# What are the most common content ratings for apps in different categories?
+# How do free apps compare with paid apps in terms of average rating and number of installs?
+```
+
+```{r}
+# Reads the dataset
+google_play_store = read.csv("google_play_store.csv")
+
+# Prints
+google_play_store
+```
+```{r}
+# Part I – Exploring
+```
+
+```{r}
+# 1
+#The dataset appears to be about apps available on the Google Play Store. Each row represents an individual app, and the columns provide various details about each app. Here's a brief description of each column, often referred to as a data dictionary:
+
+#1. App: The name of the app.
+#2. Category: The category under which the app falls.
+#3. Rating: The average user rating of the app (on a scale of 1 to 5).
+#4. Reviews: The number of user reviews.
+#5. Size: The size of the app.
+#6. Installs: The number of times the app has been installed.
+#7. Type: Whether the app is free or paid.
+#8. Price: The price of the app (if it is paid).
+#9. Content Rating: The age group for which the app is appropriate.
+#10. Genres: An additional category description.
+#11. Last Updated: The date when the app was last updated on the Play Store.
+#12. Current Ver: The current version of the app.
+#13. Android Ver: The minimum Android version required to run the app.
+```
+
+```{r}
+# Data Cleaning
+#2
+
+# Load the necessary library
+library(dplyr)
+
+
+# Step 2a: Renaming columns for easier access
+colnames(google_play_store) <- c('app_name', 'category', 'rating', 'reviews', 'size', 'installs', 'type', 'price', 'content_rating', 'genres', 'last_updated', 'current_version', 'android_version')
+
+# Step 2b: Managing NAs (Checking for null values in each column)
+na_counts <- sapply(google_play_store, function(y) sum(length(which(is.na(y)))))
+
+# Step 2c: Checking current data types
+current_dtypes <- sapply(google_play_store, class)
+
+# Display na_counts and current_dtypes
+paste("NA counts:", na_counts)
+paste("Current data types:", current_dtypes)
+
+
+```
+```{r}
+# Load the necessary libraries
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(lubridate)
+
+# Step 2b: Managing NAs (Filling or dropping NA values)
+# Filling missing 'rating' with mean value and other missing values with appropriate placeholders
+google_play_store$rating[is.na(google_play_store$rating)] <- mean(google_play_store$rating, na.rm = TRUE)
+google_play_store$type[is.na(google_play_store$type)] <- 'Free'
+google_play_store$content_rating[is.na(google_play_store$content_rating)] <- 'Everyone'
+google_play_store$current_version[is.na(google_play_store$current_version)] <- 'Varies with device'
+google_play_store$android_version[is.na(google_play_store$android_version)] <- 'Varies with device'
+
+# Step 2c: Correcting data types
+# Converting 'reviews' to integer
+google_play_store$reviews <- as.integer(google_play_store$reviews)
+
+# Converting 'installs' and 'price' to numerical values by removing '+' and '$' signs
+google_play_store$installs <- as.integer(gsub("\\+|,", "", google_play_store$installs))
+google_play_store$price <- as.numeric(gsub("\\$", "", google_play_store$price))
+
+# Converting 'last_updated' to datetime format
+google_play_store$last_updated <- dmy(google_play_store$last_updated)
+
+# Step 2d: Removing columns or rows (None needed in this case)
+
+# Step 2e: Manipulating strings (None needed in this case)
+
+# Step 2f: Reorganizing the data (None needed in this case)
+
+# Step 2g: Other steps (None needed in this case)
+
+# Checking the data after cleaning
+google_play_store
+str(google_play_store)
+```
+```{r}
+# Load the necessary libraries
+library(dplyr)
+
+# Identifying non-integer entries in the 'reviews' column
+non_integer_reviews <- google_play_store[!grepl("^\\d+$", google_play_store$reviews), ]
+
+# Displaying rows with non-integer 'reviews'
+non_integer_reviews
+
+```
+```{r}
+# Load the necessary libraries
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(lubridate)
+
+# Removing the rows with non-integer 'reviews'
+df <- df[grepl("^\\d+$", df$reviews), ]
+
+# Converting 'reviews' to integer
+df$reviews <- as.integer(df$reviews)
+
+# Reattempting the previous cleaning steps
+# Filling missing 'rating' with mean value and other missing values with appropriate placeholders
+df$rating[is.na(df$rating)] <- mean(df$rating, na.rm = TRUE)
+df$type[is.na(df$type)] <- 'Free'
+df$content_rating[is.na(df$content_rating)] <- 'Everyone'
+df$current_version[is.na(df$current_version)] <- 'Varies with device'
+df$android_version[is.na(df$android_version)] <- 'Varies with device'
+
+# Converting 'installs' and 'price' to numerical values by removing '+' and '$' signs
+df$installs <- as.integer(gsub("\\+|,", "", df$installs))
+df$price <- as.numeric(gsub("\\$", "", df$price))
+
+# Converting 'last_updated' to datetime format
+df$last_updated <- dmy(df$last_updated)
+
+# Checking the data after cleaning
+df
+str(df)
+
+```
+
+
+
+```{r}
+#3
+
+# Load the required library
+library(dplyr)
+
+# Assuming google_play_store is your cleaned dataframe
+
+# Selecting interesting variables
+interesting_vars <- google_play_store %>% select(rating, reviews, installs, price)
+
+# Determine descriptive statistics for the interesting variables
+summary(interesting_vars)
+
+```
+```{r}
+#4
+# Plot 1: Distribution of App Ratings
+p1 <- ggplot(google_play_store, aes(x=rating)) +
+  geom_histogram(binwidth=0.1, fill="blue") +
+  ggtitle("Distribution of App Ratings") +
+  xlab("Rating") +
+  ylab("Frequency")
+print(p1)
+
+```
+```{r}
+
+# Plot 2: Distribution of App Reviews (Log Scale)
+p2 <- ggplot(google_play_store, aes(x=reviews)) +
+  geom_histogram(binwidth=10000, fill="blue", aes(y = after_stat(count) + 1)) +  # Using after_stat(count) to avoid zero counts
+  scale_y_log10() +
+  ggtitle("Distribution of App Reviews (Log Scale)") +
+  xlab("Reviews") +
+  ylab("Frequency (Log Scale)")
+print(p2)
+
+
+
+
+```
+```{r}
+# Plot 3: Distribution of App Installs (Log Scale),
+
+# Filter the data to only include rows where 'installs' is below a certain threshold
+# This threshold can be adjusted based on the data distribution
+google_play_store_filtered <- google_play_store %>% filter(installs < 1e6, installs > 0, !is.na(installs))
+
+# Now plot this filtered data
+p3 <- ggplot(google_play_store_filtered, aes(x=installs)) +
+  geom_histogram(binwidth=10000, fill="blue") +
+  ggtitle("Distribution of App Installs (Filtered)") +
+  xlab("Installs") +
+  ylab("Frequency")
+  
+print(p3)
+
+
+
+```
+```{r}
+# Plot 4: Distribution of App Prices (Log Scale for Paid Apps)
+
+# Filter the data to include only paid apps
+filtered_google_play_store <- subset(google_play_store, price > 0 & !is.na(price))
+
+# Calculate the frequency of each price bin
+freq_data <- as.data.frame(table(cut(filtered_google_play_store$price, breaks=seq(0, max(filtered_google_play_store$price)+1, by=1))))
+
+# Remove bins with zero frequency
+freq_data <- freq_data[freq_data$Freq > 0,]
+
+# Plot 4: Distribution of App Prices (Log Scale for Paid Apps)
+price_plot <- ggplot(freq_data, aes(x=Var1, y=Freq)) +
+  geom_bar(stat="identity", fill="blue") +
+  scale_y_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+  ggtitle("Distribution of App Prices (Log Scale for Paid Apps)") +
+  xlab("Price") +
+  ylab("Frequency") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Show the plot
+price_plot
+
+
+```
+```{r}
+# Part II – Expanding
+```
+```{r}
+# 1
+
+# Load the necessary libraries
+library(dplyr)
+
+# Assuming df is your cleaned dataframe
+
+# Creating a new variable 'reviews_per_install' to capture how many reviews an app gets per install
+df <- df %>%
+  mutate(reviews_per_install = reviews / installs)
+
+# Creating a new variable 'is_paid' to easily filter between free and paid apps
+df <- df %>%
+  mutate(is_paid = ifelse(type == 'Paid', 1, 0))
+
+# Creating a new variable 'price_category' to categorize apps based on their price range
+bins <- c(0, 1, 5, 10, 50, 100, 500)
+labels <- c('Free', 'Very Cheap', 'Cheap', 'Moderate', 'Expensive', 'Very Expensive')
+df <- df %>%
+  mutate(price_category = cut(price, breaks = bins, labels = labels, right = FALSE))
+
+# Checking the data after creating new variables
+head(select(df, reviews_per_install, is_paid, price_category))
+str(df)
+
+```
+```{r}
+# 2. Group, summarize, rank, arrange, count, or perform any other useful operations to create new data frames that provide access to different views of the data.
+
+# Load the necessary libraries
+library(dplyr)
+library(tidyr)
+
+# Assuming df is your cleaned dataframe
+
+# 1. Grouping by 'category' and summarizing to get the mean values for 'rating', 'reviews', 'installs', and 'reviews_per_install'
+grouped_by_category <- df %>%
+  group_by(category) %>%
+  summarise(mean_rating = mean(rating, na.rm = TRUE),
+            mean_reviews = mean(reviews, na.rm = TRUE),
+            mean_installs = mean(installs, na.rm = TRUE),
+            mean_reviews_per_install = mean(reviews_per_install, na.rm = TRUE),
+            .groups = "drop")
+
+# 2. Ranking categories by mean rating
+grouped_by_category <- grouped_by_category %>%
+  mutate(rank_by_rating = rank(desc(mean_rating)))
+
+# 3. Ranking categories by mean number of installs
+grouped_by_category <- grouped_by_category %>%
+  mutate(rank_by_installs = rank(desc(mean_installs)))
+
+# 4. Ranking categories by mean number of reviews per install
+grouped_by_category <- grouped_by_category %>%
+  mutate(rank_by_reviews_per_install = rank(desc(mean_reviews_per_install)))
+
+# 5. Counting the number of free and paid apps in each category
+count_by_type <- df %>%
+  group_by(category, is_paid) %>%
+  summarise(count = n(), .groups = "drop") %>%
+  spread(key = is_paid, value = count, fill = 0) %>%
+  rename(free_apps = `0`, paid_apps = `1`)
+
+# Merging the summarized data frames to provide a comprehensive view
+merged_summary <- left_join(grouped_by_category, count_by_type, by = "category")
+
+# Displaying the new data frames
+head(arrange(merged_summary, rank_by_rating))
+head(arrange(merged_summary, rank_by_installs))
+
+
+```
+```{r}
+# 3. Extract the most interesting data results and produce visualizations that best communicate these results.
+
+# Load the necessary libraries
+library(ggplot2)
+library(gridExtra)
+
+# Assuming merged_summary is your data frame containing all the metrics and rankings
+
+# 1. Visualizing the top 10 categories by mean rating
+top_categories_by_rating <- merged_summary %>% 
+  arrange(rank_by_rating) %>% 
+  head(10)
+
+p1 <- ggplot(top_categories_by_rating, aes(x=reorder(category, -mean_rating), y=mean_rating)) +
+  geom_bar(stat='identity', fill='blue') +
+  coord_flip() +
+  ggtitle("Top 10 Categories by Mean Rating") +
+  xlab("Category") +
+  ylab("Mean Rating")
+
+# 2. Visualizing the top 10 categories by mean number of installs
+top_categories_by_installs <- merged_summary %>% 
+  arrange(rank_by_installs) %>% 
+  head(10)
+
+p2 <- ggplot(top_categories_by_installs, aes(x=reorder(category, -mean_installs), y=mean_installs)) +
+  geom_bar(stat='identity', fill='blue') +
+  coord_flip() +
+  ggtitle("Top 10 Categories by Mean Number of Installs") +
+  xlab("Category") +
+  ylab("Mean Number of Installs")
+
+# 3. Visualizing the top 10 categories by mean reviews per install
+top_categories_by_reviews_per_install <- merged_summary %>% 
+  arrange(rank_by_reviews_per_install) %>% 
+  head(10)
+
+p3 <- ggplot(top_categories_by_reviews_per_install, aes(x=reorder(category, -mean_reviews_per_install), y=mean_reviews_per_install)) +
+  geom_bar(stat='identity', fill='blue') +
+  coord_flip() +
+  ggtitle("Top 10 Categories by Mean Reviews per Install") +
+  xlab("Category") +
+  ylab("Mean Reviews per Install")
+
+# Displaying the plots
+p1
+
+```
+```{r}
+p2
+```
+
+```{r}
+p3
+```
+```{r}
+# Part III – Communicating
+```
+```{r}
+1. 
+
+#Part III - Communicating: Report on Google Play Store Apps Data
+#Observations:
+#Highly Rated Categories: The "Education" category has the highest average rating, suggesting that educational apps generally meet user expectations.
+
+#Most Installed Categories: Apps in the "Communication" category have the highest average number of installs, indicating a strong user demand for these types of apps.
+
+#User Engagement: The "Game" category has the highest average reviews per install, signifying high user engagement and interaction.
+
+#Free vs Paid Apps: The majority of apps in the dataset are free, but this does not necessarily correlate with higher ratings.
+
+#Review Patterns: Categories like "Social" and "Dating" also show high user engagement, as indicated by the reviews per install metric.
+
+#Follow-Up Questions for Future Exploration:
+#User Retention: How does the number of reviews correlate with user retention metrics, if such data were available?
+
+#Seasonal Trends: Are there seasonal trends in app installs or ratings? For example, do educational apps see more installs during the school season?
+
+#Monetization: How does the type of monetization (ads, in-app purchases, etc.) affect user ratings and engagement?
+
+#Content Rating: How does the content rating (e.g., "Everyone", "Teen") affect user engagement and ratings?
+
+#App Updates: Is there a correlation between the frequency of app updates and user ratings or reviews?
+
+```
+```{r}
+# Data Reading and Initial Exploration
+
+# Reading the data
+df <- read.csv("google_play_store.csv")
+
+# Displaying the first few rows
+head(df)
+
+```
+
+```{r}
+
+# Data Cleaning
+
+# Renaming columns
+colnames(df) <- c('app_name', 'category', 'rating', 'reviews', 'size', 'installs', 'type', 'price', 'content_rating', 'genres', 'last_updated', 'current_version', 'android_version')
+
+# Filling or removing NA values
+df$rating[is.na(df$rating)] <- mean(df$rating, na.rm = TRUE)
+df$type[is.na(df$type)] <- 'Free'
+df$content_rating[is.na(df$content_rating)] <- 'Everyone'
+
+# Correcting data types
+df$reviews <- as.integer(df$reviews)
+df$installs <- as.integer(gsub('[+,]', '', df$installs))
+df$price <- as.numeric(gsub('\\$', '', df$price))
+df
+```
+

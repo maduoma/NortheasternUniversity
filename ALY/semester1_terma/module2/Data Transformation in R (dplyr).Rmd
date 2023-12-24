@@ -1,0 +1,177 @@
+---
+title: "Data Transformation in R (dplyr)"
+output: html_notebook
+# output: pdf_document
+
+---
+ 
+```{r}
+# install package if needed 
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+# install.packages('dplyr')
+```
+
+```{r}
+# Load R packages
+library(ggplot2)
+library(tidyverse)
+library(dplyr) # data processing 
+
+```
+
+```{r}
+# Load built-in dataset mpg into the environment
+data(mpg)
+
+```
+
+```{r}
+# Basic functions 
+
+head(mpg)
+
+glimpse(mpg)
+
+view(mpg)
+
+```
+
+```{r}
+
+group_by(mpg, class) 
+
+mpg %>% group_by(class) 
+
+```
+
+```{r}
+# Combine vectors into data frame
+data_frame(x = c(135,251,61,16,11), y = c(532,15,1,661,1))
+
+```
+
+```{r}
+arrange(mpg, year)
+
+arrange(mpg, desc(year))
+
+```
+
+```{r}
+# Rename a column (cyl to cylinder)
+df <- mpg
+rename(df, cylinder=cyl)
+rename(df, drive=drv)
+
+```
+
+```{r}
+# Filter by row 
+
+filter(mpg, mpg$displ>3)
+
+filter(mpg, mpg$manufacturer == 'audi')
+
+filter(mpg, mpg$displ>5 | mpg$displ<3) %>% arrange(desc(displ))
+
+filter(mpg, mpg$displ<5 & mpg$displ>3) %>% arrange(desc(displ))
+
+arrange(filter(mpg, mpg$displ<5 & mpg$displ>3), desc(displ))
+
+```
+
+
+```{r}
+# Filter by column
+
+select(mpg, model, displ, cty, hwy)
+
+select(mpg, contains('model'))
+
+head(select(mpg, starts_with('d')))
+
+head(select(mpg, ends_with('l')))
+
+select(mpg, -model, -displ, -cty, -hwy)
+
+```
+
+```{r}
+# Remove duplicate rows
+distinct(mpg)
+
+```
+
+```{r}
+# Select rows by position e.g row 20 to 25
+slice(mpg, 20:25)
+
+```
+
+```{r}
+# Data Summary
+
+summarise(mpg, value = mean(mpg$cyl))
+
+summarise(mpg, value = mean(mpg$cyl), value2 = max(mpg$cyl))
+
+summarise(mpg, value = IQR(mpg$cyl))
+
+mpg$cyl
+summarise(mpg, value = nth(mpg$cyl, 5))
+
+mpg$cyl
+summarise(mpg, value = nth(mpg$cyl, -4))
+
+distinct(mpg, mpg$cyl)
+
+summarise(mpg, value = n_distinct(mpg$cyl))
+
+
+```
+
+```{r}
+# Group data
+
+group_by(mpg, class)
+
+
+summarise(group_by(mpg, class), mean_cty = mean(cty, na.rm=TRUE), mean_hwy = mean(hwy, na.rm=TRUE))
+
+summarise_all(group_by(mpg, class), funs(mean(.,na.rm=TRUE)))
+
+summarise_at(group_by(mpg, class), vars(displ, cty), funs(mean(.,na.rm=TRUE)))
+
+summarise_at(group_by(mpg, class), vars(displ, cty), funs(mean(.,na.rm=TRUE), sum(.,na.rm=TRUE)))
+
+summarise(group_by(mpg, class), count = n())
+
+summarise(group_by(mpg, class), cum_count = cumsum(cty))
+
+```
+
+```{r}
+# Create new variables 
+
+mpg2 = mutate(mpg, new1 = (cyl+displ)/2)
+mpg2
+
+mutate(mpg2, new1_rounded = round(new1, 1))
+
+transmute(mpg, new1 = (cyl+displ)/2)
+
+```
+
+```{r}
+# Combine Dataframes
+
+a <- data_frame(x = c('a','b','c','d'), y = c(11,22,33,44))
+b <- data_frame(x = c('a','b','c','e'), y = c(55,66,77,88))
+
+bind_rows(a, b)
+
+bind_cols(a, b)
+
+```
+

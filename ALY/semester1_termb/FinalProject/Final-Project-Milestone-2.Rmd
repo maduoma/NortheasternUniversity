@@ -1,0 +1,103 @@
+---
+title: "Hypothesis Tests"
+output: html_notebook
+---
+
+```{r}
+# install package if needed 
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+```
+
+```{r}
+# Load R packages
+library(ggplot2)
+library(tidyverse)
+
+```
+
+```{r}
+
+churn_data <- read.csv("churn_data.csv")
+churn_data
+
+```
+```{r}
+# Look at the data
+head(churn_data)
+
+```
+
+```{r}
+# Load the data set
+churn_data <- read_csv("churn_data.csv", show_col_types = FALSE)
+
+# Specify the variable of interest
+variable_name <- "MonthlyCharge"  # Replace with your chosen variable
+
+# Look at the first 10 values in the specified variable
+head(churn_data$MonthlyCharge, 10)
+
+# Get summary statistics of the specified variable
+summary(churn_data$MonthlyCharge)
+#summary(churn_data$percollege)
+# Plotting
+# Set plot size
+options(repr.plot.width=6, repr.plot.height=3)
+
+# Histogram of MonthlyCharge
+ggplot(churn_data, aes(MonthlyCharge)) + geom_histogram()
+
+# Boxplot of MonthlyCharge
+ggplot(churn_data, aes(MonthlyCharge)) + geom_boxplot() + coord_flip()
+
+```
+```{r}
+# Load the data set
+churn_data <- read_csv("churn_data.csv", show_col_types = FALSE)  # Replace with the correct file path
+
+# Prepare data for hypothesis tests
+churned_customers <- subset(churn_data, Churn == 1)
+overall_mean_monthly_charge <- mean(churn_data$MonthlyCharge)
+customers_with_plan <- subset(churn_data, DataPlan == 1)
+customers_without_plan <- subset(churn_data, DataPlan == 0)
+
+# One-sample t-test for Question 1 at different confidence levels
+t_test_result_1_90 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.90)
+t_test_result_1_95 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.95)
+t_test_result_1_99 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.99)
+
+# Print results for One Sample t-test at different confidence levels
+cat("\n----------------------------------------\n")
+cat("One Sample t-test at different confidence levels Results:\n")
+cat("\n----------------------------------------\n")
+print("One Sample t-test at 90% Confidence Level:")
+print(t_test_result_1_90)
+
+print("One Sample t-test at 95% Confidence Level:")
+print(t_test_result_1_95)
+
+print("One Sample t-test at 99% Confidence Level:")
+print(t_test_result_1_99)
+cat("\n----------------------------------------\n")
+
+# Two-sample t-test for Question 2 at different confidence levels
+t_test_result_2_90 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.90)
+t_test_result_2_95 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.95)
+t_test_result_2_99 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.99)
+
+cat("Two Sample t-test at different confidence levels Results:\n")
+cat("\n----------------------------------------\n")
+# Print results for Two Sample t-test at different confidence levels
+print("Welch Two Sample t-test at 90% Confidence Level:")
+print(t_test_result_2_90)
+
+print("Welch Two Sample t-test at 95% Confidence Level:")
+print(t_test_result_2_95)
+
+print("Welch Two Sample t-test at 99% Confidence Level:")
+print(t_test_result_2_99)
+
+```
+
+

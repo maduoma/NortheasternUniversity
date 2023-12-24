@@ -1,0 +1,271 @@
+---
+title: "ggplot"
+output: html_notebook
+# output: pdf_document
+---
+
+```{r}
+# install package if needed 
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+```
+
+```{r}
+# Load R packages
+library(ggplot2)
+library(tidyverse)
+
+# ggplot2 documentation https://ggplot2.tidyverse.org/reference/
+
+```
+
+```{r}
+# Load built-in dataset mpg into the environment (https://ggplot2.tidyverse.org/reference/mpg.html)
+data(mpg)
+
+```
+
+```{r}
+# Look at the data
+head(mpg)
+
+mpg
+
+```
+
+```{r}
+# ggplot2 structure
+# ggplot is based on 'grammar of graphics'
+# Start with defining the data (e.g. ggplot(mpg...))
+# Add layers and element with '+'
+# Layers: geom, stat, mappings (aesthetics), etc can be added on top of one another
+# Additional elements: color, theme, etc
+# 
+# Example
+
+# Set plot size
+options(repr.plot.width=6, repr.plot.height=3)
+
+# Structured ggplot syntax
+ggplot(mpg, aes(hwy, cty)) + # Use mpg data; define hwy and cty as variables inside aesthetics
+ geom_point(aes(color = cyl)) + # Plot points segmented by cyl (defined inside aesthetics)
+ geom_smooth(method ="lm", se = FALSE) + # Add elements (e.g. a trendline)
+ scale_color_gradient() + # Add color element
+ theme_bw() # Add theme
+
+```
+
+```{r}
+# Aesthetics
+# Define extra features based on variables
+# Options (available depending on the type of graph/function):
+# x, y: e.g. ggplot(mpg, aes(hwy, cty))
+# color
+# size
+# alpha
+# shape
+# linetype
+# fill
+
+# set color 
+ggplot(data = mpg) + # Use mpg data
+geom_point(mapping = aes(x = displ, y = hwy, color = class)) 
+# Plot points; Define displ and hwy as variables inside aesthetics; 
+# Segment points by color based on a third variable (class)
+
+# set size 
+# if a variable is not numerical, the size of each category in a variable will be based on the alphabetic order of the category names
+ggplot(data = mpg) + # Use mpg data
+geom_point(mapping = aes(x = displ, y = hwy, size = class))
+
+# set transparency (alpha)
+ggplot(data = mpg) + # Use mpg data
+geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
+
+# set shape of data points 
+ggplot(data = mpg) +# Use mpg data
+geom_point(mapping = aes(x = displ, y = hwy), shape = 17, color = 'blue')
+
+```
+
+```{r}
+# Labels
+# ggtitle('Title'): Add a main title above the plot
+# xlab('x label'): Change the label on the x axis
+# ylab('y label'): Change the label on the y axis
+# labs(title = 'Title', x = 'x label', y = 'y label')
+
+ggplot(mpg, aes(cty, hwy)) + 
+geom_point() + 
+ggtitle('Title') + 
+xlab('x label') + 
+ylab('this is a y label') + 
+theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+```{r}
+# Legends
+# theme(legend.position = 'bottom'): Place legend at 'bottom', 'top', 'left', or 'right'
+
+ggplot(data = mpg) +
+geom_point(mapping = aes(x = displ, y = hwy, shape = class)) + 
+theme(legend.position = 'top') 
+
+# By default, R uses 6 different symbols. To use more than 6 symbols, use the scale_shape_manual() function
+ggplot(data = mpg) +
+geom_point(mapping = aes(x = displ, y = hwy, shape = class)) + 
+theme(legend.position = 'top') + scale_shape_manual(values = seq(0,6))
+
+# You can also specify particular shapes to be used
+ggplot(data = mpg) +
+geom_point(mapping = aes(x = displ, y = hwy, shape = class)) + 
+theme(legend.position = 'top') + scale_shape_manual(values = c(1, 5, 10, 6, 22, 17, 4))
+
+# See ggplot's documentation for a list of symbols and assigned numbers:
+# https://ggplot2.tidyverse.org/articles/ggplot2-specs.html
+
+```
+
+
+
+```{r}
+# Histogram
+
+# Plot histogram with counts
+ggplot(mpg, aes(hwy)) + geom_histogram(binwidth = 3)
+
+# Plot histogram with counts and color
+ggplot(mpg, aes(hwy)) + geom_histogram(binwidth = 3, color = 'red', fill = 'blue')
+
+# Plot histogram with percentage using 'stat(count)/sum(stat(count))'
+ggplot(mpg, aes(x=hwy, y=stat(count)/sum(stat(count)))) + geom_histogram(binwidth=3) + ylab('Percentage')
+
+```
+
+```{r}
+# Density Plot
+# A smoothed histogram: An alternative to the histogram for continuous variables
+ggplot(mpg, aes(hwy)) + # basic
+geom_density(kernel = 'gaussian') # add density plot as second layer
+
+```
+
+
+```{r}
+# Bar Chart
+
+# Bar chart of count of class of cars
+ggplot(mpg, aes(class)) + geom_bar()
+
+# Bar chart of count of class of cars, colored by class 
+ggplot(mpg) + geom_bar(mapping = aes(x = class, fill = class))
+
+# Bar chart of count of class of cars, segmented by drv 
+ggplot(mpg) + geom_bar(mapping = aes(x = class, fill = drv))
+
+# Rotate labels
+ggplot(mpg) + geom_bar(mapping = aes(x = class, fill = drv)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+# Bar chart showing total hwy of cars
+# x-axis: class
+# y-axis: sum of hwy for each class
+
+ggplot(mpg, aes(class, hwy)) + geom_bar(stat = 'identity')
+
+```
+
+```{r}
+# stat_summary: Used to aggregate values by categorical variables 
+# documentation: https://ggplot2.tidyverse.org/reference/stat_summary.html
+
+# Bar chart of mean hwy values by class of cars 
+
+# x-axis: class
+# y-axis: mean of hwy for each class
+
+ggplot(mpg, aes(class, hwy)) + stat_summary(fun="mean", geom="bar")
+
+```
+
+```{r}
+# Scatterplot
+ggplot(mpg, aes(cty, hwy)) + geom_point()
+
+# Zoom in with xlim() and ylim()
+ggplot(mpg, aes(cty, hwy)) + geom_point() + xlim(20, 30) + ylim(25, 35)
+
+```
+
+
+```{r}
+# Boxplot
+
+# vertical
+ggplot(mpg, aes(class, hwy)) + geom_boxplot()
+
+# horizontal (flip x an y variables)
+ggplot(mpg, aes(hwy, class)) + geom_boxplot()
+
+```
+
+
+```{r}
+# Line Plot (use time-series data 'economics')
+
+# x-axis: date
+# y-axis: unemploy
+
+ggplot(economics, aes(date, unemploy)) + geom_line()
+
+# can put aes inside geom_line()
+ggplot(economics) + geom_line(aes(date, unemploy))
+
+
+```
+```{r}
+# Line Plot for categorical data
+
+# x-axis: class
+# y-axis: average hwy
+
+mpg2 = summarise(group_by(mpg, class), mean_hwy = mean(hwy, na.rm=TRUE))
+
+ggplot(mpg2) + geom_line(aes(class, mean_hwy), group = 1)
+
+# Scatterpot with line plot (aes inside ggplot is the formatting for plots)
+ggplot(mpg2, aes(class, mean_hwy, color = mean_hwy)) + geom_point() + geom_line(group = 1)
+
+# Scatterpot with line plot (put aes inside each function (geom_point, geom_line...) for specific formatting for individual plots)
+ggplot(mpg2) + geom_point(aes(class, mean_hwy, size = mean_hwy)) + geom_line(aes(class, mean_hwy, color = mean_hwy), group = 1)
+
+```
+
+
+```{r}
+# Exercises: Use the 'mpg' data. 
+
+# 1. Use the 'mpg' data. Create a boxplot of the distribution of hwy for each manufacturer.
+# Which manufacturer has the outlier of the highest value?
+
+ggplot(mpg, aes(manufacturer, hwy)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+# Ans: Volkswagen
+
+# 2. Use the 'mpg' data. Create a density plot of displ. How many peaks does the distribution of displ have?
+
+ggplot(mpg, aes(displ)) + geom_density(kernel = 'gaussian') 
+
+
+# Ans: 1
+
+# 3. Use the 'mpg' data. Create a bar chart of counts of manufacturer. Segment each bar further by type of transmission (trans). For Dodge, which type of transmission is most common?
+
+ggplot(mpg) + geom_bar(mapping = aes(x = manufacturer, fill = trans)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+# Ans: auto(I4)
+
+```
+

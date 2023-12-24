@@ -1,0 +1,545 @@
+---
+title: "Module-3-R-Practice-Template.Rmd"
+output: html_document
+---
+
+```{r}
+# Install the libraries if needed
+
+# install package if needed 
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+
+# Load R packages
+library(ggplot2)
+library(tidyverse)
+library(readr)
+library(broom)
+library(stats)
+
+```
+
+```{r}
+# Answer each question in the assignment using R. 
+
+# This assignment is based on code covered in class. Some questions build on old code. Some questions require you to use new functions by looking up the R documentation. There is more than one way to answer a question. 
+
+# The lab will be graded after the due date. The attempt with the highest score will be kept.
+
+
+```
+
+```{r}
+# Set the file path (replace 'file_path' with your actual file path)
+file_path <- "walmart_data.csv"
+
+# Load the Walmart data
+walmart_data <- read_csv(file_path, show_col_types = FALSE)
+
+# Display a list of columns to choose two variables for the analysis
+names(walmart_data)
+```
+
+```{r}
+# 1. A random sample of 100 observations is selected from a normal population. The sample mean was 407 and the sample standard deviation 6. Using the 0.95 confidence level. Conduct a one-sample t-test to test the null hypothesis that the population mean = 400. 
+
+# Answer the questions below. 
+
+# a. State the null and alternative hypotheses. 
+
+# Null Hypothesis (H0): The population mean is 400 (mu = 400).
+# Alternative Hypothesis (H1): The population mean is not 400 (mu != 400).
+
+# b. What is the critical value of t-test using the normal (z) distribution? Use the qnorm() function. Round the answer to nearest 2 decimals.
+
+# Critical value for a two-tailed test at 95% confidence level using normal distribution
+alpha <- 0.05
+critical_value <- qnorm(1 - alpha/2)
+critical_value # Display the critical value
+
+# c. What is the value of the test statistic? Round the answer to nearest 2 decimals.
+
+set.seed(100) # Ensuring reproducibility
+
+# Generates the sample
+sample_size <- 100
+sample_mean <- 407
+sample_std_dev <- 6
+sample <- rnorm(sample_size, mean = sample_mean, sd = sample_std_dev)
+
+# Performs the one-sample t-test
+test_result <- t.test(sample, mu = 400)
+
+test_result$statistic # Displays the test statistic
+
+# Creates the data with the specified statistics using the code below. Then use the t.test() function.
+
+set.seed(100) # set.seed() will generate the same random sample each time
+sample = rnorm(100, mean = 407, sd = 6)
+
+# d. Is the test statistic greater or less than the critical value? 
+
+# You compare the absolute value of the test statistic to the critical value.
+# If the test statistic is greater than the critical value, it suggests rejecting the null hypothesis.
+test_result$statistic > critical_value
+
+# e. What is the p-value of the hypothesis test? 
+# Using the previous test result
+p_value <- test_result$p.value
+
+p_value # Display the p-value
+
+
+```
+
+```{r}
+# 2. In the question above, can you conclude that the population mean is different from 400? 
+# Yes, I conclude that the population mean is different from 400.
+
+#Reason:
+#The test statistic calculated from the sample data was significantly greater than the critical value obtained from the z-distribution. In our case, the test statistic was approximately 10.90, whereas the critical value for a 95% confidence level was ±1.96. This large test statistic suggests a substantial difference between the sample mean and the hypothesized population mean of 400.
+
+#Additionally, the p-value of the hypothesis test was very close to 0. A p-value this small (typically ≤ 0.05 is considered significant) indicates a very low probability of observing such a sample mean from a population with a mean of 400, assuming the null hypothesis is true.
+
+#Based on these results, we reject the null hypothesis that the population mean is 400 and conclude that the population mean is indeed different from 400.
+
+```
+
+```{r}
+# 3. A sales manager claims that the sales representatives make an average of 40 sales calls per week on professors. Several reps say that this estimate is too low. To investigate, a random sample of 30 sales representatives reveals that the mean number of calls made last week was 42. The standard deviation of the sample is 2.1 calls. Using the 0.95 confidence level, conduct a hypothesis test to test whether the mean number of calls per salesperson per week is greater than 40.
+
+# Answer the questions below. 
+
+# a. State the null and alternative hypotheses. 
+# Null Hypothesis (H0): Mean number of calls = 40 (mu = 40).
+# Alternative Hypothesis (H1): Mean number of calls > 40 (mu > 40).
+
+
+# b. What is the critical value of t-test using the normal (z) distribution? Use the qnorm() function. Round the answer to nearest 2 decimals.
+# Since the sample size is less than 30, use the t-distribution
+sample_size <- 30
+alpha <- 0.05
+df <- sample_size - 1 # Degrees of freedom
+
+# Critical value from the t-distribution
+critical_value_t <- qt(1 - alpha, df)
+round(critical_value_t, 2)
+
+# c. What is the value of the test statistic? Round the answer to nearest 2 decimals.
+sample_mean <- 42
+population_mean <- 40
+sample_std_dev <- 2.1
+standard_error <- sample_std_dev / sqrt(sample_size)
+
+# Calculates the test statistic
+test_statistic <- (sample_mean - population_mean) / standard_error
+round(test_statistic, 2)
+
+# d. Is the test statistic greater or less than the critical value? 
+# Checks if test statistic is greater than the critical value
+test_statistic > critical_value_t
+
+# e. What is the p-value of the hypothesis test? 
+# Calculates the p-value for a one-tailed test
+p_value <- pt(test_statistic, df, lower.tail = FALSE)
+round(p_value, 4)
+
+
+```
+
+```{r}
+# 4. In the question above, can you conclude that number of calls per salesperson per week is greater than 40?
+
+#Interpretation of R Code Results:
+#Test Statistic: The calculated test statistic was significantly greater than the critical value obtained from the t-distribution. This indicates that the sample mean is much higher than the hypothesized population mean of 40 calls per week.
+
+#P-value: The p-value was approximately 0.00, which is significantly lower than the typical alpha level of 0.05 used for significance testing.
+
+#Conclusion:
+#Given these results (a large test statistic and a very small p-value), we have strong evidence to reject the null hypothesis (H0 : μ = 40) in favor of the alternative hypothesis (H1 : μ > 40). 
+
+# Therefore, it can be concluded that the number of calls per salesperson per week is greater than 40.
+
+```
+
+```{r}
+# 5. Suppose mean income per person in the United States is $60,000, and the distribution of incomes follows a normal distribution. A random sample of 100 residents of Wilmington, Delaware, had a mean of $70,000 with a standard deviation of $10,000. At the 0.95 confidence level, is that enough evidence to conclude that residents of Wilmington, Delaware, have more income than the national average?
+
+# Setting up the parameters
+sample_mean <- 70000
+population_mean <- 60000
+sample_std_dev <- 10000
+sample_size <- 100
+alpha <- 0.05 # For a 95% confidence level
+
+# Calculating the standard error
+standard_error <- sample_std_dev / sqrt(sample_size)
+
+# Calculating the t-statistic
+t_statistic <- (sample_mean - population_mean) / standard_error
+
+# Calculating degrees of freedom
+df <- sample_size - 1
+
+# Calculating the p-value for one-tailed test
+p_value <- pt(t_statistic, df, lower.tail = FALSE)
+
+# Checking if we can reject the null hypothesis
+result <- p_value < alpha
+
+# Output the results
+t_statistic
+p_value
+result
+
+
+
+```
+
+
+```{r}
+# 6. According to a recent survey, Americans get a mean of 7 hours of sleep per night. A random sample of 50 students at West Virginia University revealed the mean length of time slept last night was 6 hours and 48 minutes (6.8 hours). The standard deviation of the sample was 2 hours. At the 95% confidence level, can you conclude that students at West Virginia sleep less than the typical American? 
+
+# Parameters
+sample_mean <- 6.8
+population_mean <- 7
+sample_std_dev <- 2
+sample_size <- 50
+alpha <- 0.05 # For a 95% confidence level
+
+# Standard Error
+standard_error <- sample_std_dev / sqrt(sample_size)
+
+# T-Statistic
+t_statistic <- (sample_mean - population_mean) / standard_error
+
+# Degrees of Freedom
+df <- sample_size - 1
+
+# P-value for one-tailed test
+p_value <- pt(t_statistic, df)
+
+# Output the results
+t_statistic
+p_value
+
+```
+
+
+
+```{r}
+# 7. A new weight-watching company advertises that those who join will lose an average of 10 pounds after the first 2 weeks. A random sample of 50 people who joined the weight reduction program revealed a mean loss of 9 pounds and standard deviation of 2.8 pounds. At the 95% confidence level, can we conclude that those joining the company will lose less than 10 pounds? 
+
+
+# Given data
+sample_mean <- 9
+population_mean <- 10
+sample_std <- 2.8
+sample_size <- 50
+alpha <- 0.05
+
+# Calculate the t-statistic
+t_statistic <- (sample_mean - population_mean) / (sample_std / sqrt(sample_size))
+
+# Determine the critical t-value for a one-tailed test
+degrees_of_freedom <- sample_size - 1
+critical_t_value <- qt(alpha, degrees_of_freedom)
+
+# Check if we reject the null hypothesis
+reject_null <- t_statistic < critical_t_value
+
+# Print the results
+print(paste("t-statistic:", t_statistic))
+print(paste("Critical t-value:", critical_t_value))
+print(paste("Reject Null Hypothesis:", reject_null))
+
+
+
+```
+
+```{r}
+# 8. According to a survey, the current 30-year mortgage rate is now less than 5%. A sample of 30 small banks in the Midwest revealed an average rate of 4.43% and a standard deviation of 0.75%. At the 99% confidence level, can we conclude that the 30-year mortgage rate for small banks is less than 4%? 
+# Given data for the problem
+sample_mean <- 4.43  # mean mortgage rate in percentage
+population_mean <- 4  # hypothesized population mean in percentage
+sample_std_dev <- 0.75  # standard deviation in percentage
+sample_size <- 30
+alpha <- 0.01  # For a 99% confidence level
+
+# Calculating the standard error
+standard_error <- sample_std_dev / sqrt(sample_size)
+
+# Calculating the t-statistic
+t_statistic <- (sample_mean - population_mean) / standard_error
+
+# Degrees of freedom
+df <- sample_size - 1
+
+# Calculating the p-value for a one-tailed test
+p_value <- pt(t_statistic, df, lower.tail = FALSE)
+
+# Output the results
+t_statistic
+p_value
+
+
+```
+
+```{r}
+# 9. Use the Walmart data. These are the survey responses of a sample of Walmart customers. Run a hypothesis test using the variable Prices_Important. At the 95% confidence level, can we conclude that the average response for prices being important is equal to 5?
+
+
+# Load the data
+walmart_data <- read_csv("walmart_data.csv", show_col_types = FALSE) # replace with the actual path
+
+# Hypothesized population mean
+population_mean <- 4
+
+# Extract the 'Walmart_Variety' column data
+walmart_variety_data <- walmart_data$Walmart_Variety
+
+# Perform a one-sample t-test
+test_result <- t.test(walmart_variety_data, mu = population_mean, alternative = "greater")
+
+# Extract the test statistic and p-value
+t_statistic <- test_result$statistic
+p_value_one_tailed <- test_result$p.value
+
+# Output the results
+t_statistic
+p_value_one_tailed
+
+
+```
+
+```{r}
+# 10. Use the Walmart data. These are the survey responses of a sample of Walmart customers. Run a hypothesis test using the variable Walmart_Variety. At the 95% confidence level, can we conclude that the average response for quality being important for Walmart is greater than 4?
+
+
+# Load the data
+walmart_data <- read_csv("walmart_data.csv", show_col_types = FALSE) # replace with the actual path
+
+# Hypothesized population mean
+population_mean <- 4
+
+# Extract the 'Walmart_Variety' column data
+walmart_variety_data <- walmart_data$Walmart_Variety
+
+# Perform a one-sample t-test
+test_result <- t.test(walmart_variety_data, mu = population_mean, alternative = "greater")
+
+# Extract the test statistic and p-value
+t_statistic <- test_result$statistic
+p_value_one_tailed <- test_result$p.value
+
+# Output the results
+t_statistic
+p_value_one_tailed
+
+
+```
+
+
+
+```{r}
+# 11. Use the Walmart data. 
+
+# In a report of up to 4 pages. Include the following: 
+
+# - Choose 2 more variables from the Walmart data of your choice. For each variable, run a one-sample t-test.
+#1. Walmart_Fair_Prices
+#2. Walmart_Returns_Policy
+# - For each test: 
+# - State the null and alternative hypotheses you want to test.
+cat("\n----------------------------------------\n")
+cat("# 1. Hypotheses for Walmart_Fair_Prices Results:\n")
+cat("\n----------------------------------------\n")
+# 1. Hypotheses for Walmart_Fair_Prices
+#Null Hypothesis (H0): Average score for Walmart's fair prices is 5.
+#Alternative Hypothesis (H1): Average score for Walmart's fair prices is not 5.
+# - State the critical value of t-test using the normal (z) distribution. Use the qnorm() function. 
+alpha <- 0.05
+critical_value_z <- qnorm(1 - alpha/2)  # Two-tailed test
+critical_value_z
+
+# - State the value of the test statistic. 
+population_mean_fair_prices <- 5
+fair_prices_data <- walmart_data$Walmart_Fair_Prices
+t_statistic_fair_prices <- t.test(fair_prices_data, mu = population_mean_fair_prices)$statistic
+t_statistic_fair_prices
+# - Compare the test statistic to the critical value.
+compare_to_critical_value_fair_prices <- t_statistic_fair_prices > critical_value_z
+compare_to_critical_value_fair_prices
+# - State the p-value of the test. 
+p_value_fair_prices <- t.test(fair_prices_data, mu = population_mean_fair_prices)$p.value
+p_value_fair_prices
+# - State the conclusion of the test.
+cat("\n----------------------------------------\n")
+cat("Hypotheses for Walmart_Returns_Policy Results:\n")
+cat("\n----------------------------------------\n")
+
+# 1. Hypotheses for Walmart_Fair_Prices
+#Null Hypothesis (H0): Average score for Walmart's returns policy is 4.
+#Alternative Hypothesis (H1): Average score for Walmart's returns policy is not 4.
+# - State the critical value of t-test using the normal (z) distribution. Use the qnorm() function. 
+alpha <- 0.05
+critical_value_z <- qnorm(1 - alpha/2)  # Two-tailed test
+critical_value_z
+
+# - State the value of the test statistic. 
+population_mean_returns_policy <- 4
+returns_policy_data <- walmart_data$Walmart_Returns_Policy
+t_statistic_returns_policy <- t.test(returns_policy_data, mu = population_mean_returns_policy)$statistic
+t_statistic_returns_policy
+# - Compare the test statistic to the critical value.
+compare_to_critical_value_returns_policy <- t_statistic_returns_policy > critical_value_z
+compare_to_critical_value_returns_policy
+# - State the p-value of the test. 
+p_value_returns_policy <- t.test(returns_policy_data, mu = population_mean_returns_policy)$p.value
+p_value_returns_policy 
+# - State the conclusion of the test.
+
+# In up to 300 words, describe a situation or problem from your job, everyday life, current events, etc., for which a one-sample t-test would be useful for decision making. Describe the business problem and stakeholders. i.e. Who (person, group, organization) would be interested in solving this business problem? Describe up to 5 variables that can be used.
+
+#Solution: Is in the report.
+
+```
+```{r}
+# Step 1: Loads the data set
+walmart_data <- read.csv("walmart_data.csv")
+
+# Step 2: Compute the Mean
+mean_fair_prices <- mean(walmart_data$Walmart_Fair_Prices)
+mean_returns_policy <- mean(walmart_data$Walmart_Returns_Policy)
+mean_fair_prices
+mean_returns_policy 
+# Step 3: Conduct the One-Sample T-Test
+t_test_fair_prices <- t.test(walmart_data$Walmart_Fair_Prices, mu = mean_fair_prices)
+t_test_returns_policy <- t.test(walmart_data$Walmart_Returns_Policy, mu = mean_returns_policy)
+t_test_fair_prices
+t_test_returns_policy
+# Step 4: Determine the Critical Value
+# Assuming a 95% confidence level for a two-tailed test
+critical_value_95 <- qnorm(0.975)
+critical_value_95
+# Step 5: Compare and Conclude
+# This part is usually interpretative based on the output from the t-test and the critical value
+
+```
+
+```{r}
+# 12. Upload a R Markdown file with all code and visualizations used to answer all questions above. You may use the template Module-3-R-Practice-Template.Rmd. 
+
+```
+```{r}
+# Visualizations
+```
+
+```{r}
+
+# Creating histograms for Walmart_Fair_Prices and Walmart_Returns_Policy
+
+# Histogram for Walmart_Fair_Prices
+ggplot(walmart_data, aes(x=Walmart_Fair_Prices)) +
+  geom_histogram(bins=10, fill="skyblue", color="black") +
+  geom_vline(aes(xintercept=population_mean_fair_prices), color="red", linetype="dashed", linewidth=1) +
+  ggtitle("Distribution of Walmart Fair Prices Ratings") +
+  xlab("Ratings") +
+  ylab("Frequency") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Histogram for Walmart_Returns_Policy
+ggplot(walmart_data, aes(x=Walmart_Returns_Policy)) +
+  geom_histogram(bins=10, fill="lightgreen", color="black") +
+  geom_vline(aes(xintercept=population_mean_returns_policy), color="red", linetype="dashed", linewidth=1) +
+  ggtitle("Distribution of Walmart Returns Policy Ratings") +
+  xlab("Ratings") +
+  ylab("Frequency") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+
+```
+```{r}
+
+# Loads the data from the CSV file
+walmart_data <- read.csv('walmart_data.csv')  # Adjust the path as necessary
+
+# Create box plots for Walmart_Fair_Prices and Walmart_Returns_Policy using ggplot2
+p1 <- ggplot(walmart_data, aes(y = Walmart_Fair_Prices)) +
+  geom_boxplot(fill = "skyblue") +
+  labs(title = "Boxplot of Walmart Fair Prices Ratings", x = "Ratings", y = "") +
+  theme_minimal()
+
+p2 <- ggplot(walmart_data, aes(y = Walmart_Returns_Policy)) +
+  geom_boxplot(fill = "lightgreen") +
+  labs(title = "Boxplot of Walmart Returns \n Policy Ratings", x = "Ratings", y = "") +
+  theme_minimal()
+
+
+grid.arrange(p1, p2, ncol = 2)
+
+```
+
+```{r}
+hist(walmart_data$Walmart_Quality, 
+     main="Histogram of Walmart_Quality", 
+     xlab="Quality Score", 
+     ylab="Frequency", 
+     col="blue", 
+     border="black")
+
+
+hist(walmart_data$Walmart_Variety, 
+     main="Histogram of Walmart_Variety", 
+     xlab="Variety Score", 
+     ylab="Frequency", 
+     col="green", 
+     border="black")
+
+```
+
+```{r}
+
+walmart_data <- read.csv("walmart_data.csv")
+
+# Histogram for Walmart_Quality
+p1 <- ggplot(walmart_data, aes(x = Walmart_Quality)) +
+      geom_histogram(bins = 10, fill = "blue", color = "black") +
+      ggtitle("Histogram of Walmart_Quality") +
+      xlab("Quality Score") +
+      ylab("Frequency")
+
+# Histogram for Walmart_Variety
+p2 <- ggplot(walmart_data, aes(x = Walmart_Variety)) +
+      geom_histogram(bins = 10, fill = "green", color = "black") +
+      ggtitle("Histogram of Walmart_Variety") +
+      xlab("Variety Score") +
+      ylab("Frequency")
+
+# Arranging the plots side by side
+library(gridExtra)
+grid.arrange(p1, p2, nrow = 1)
+
+```
+```{r}
+walmart_data <- read.csv("walmart_data.csv")
+
+# Boxplot for Walmart_Quality
+p1 <- ggplot(walmart_data, aes(y = Walmart_Quality, x = factor(0))) +
+      geom_boxplot(fill = "blue") +
+      labs(title = "Boxplot of Walmart_Quality", x = "", y = "Quality Score")
+
+# Boxplot for Walmart_Variety
+p2 <- ggplot(walmart_data, aes(y = Walmart_Variety, x = factor(0))) +
+      geom_boxplot(fill = "green") +
+      labs(title = "Boxplot of Walmart_Variety", x = "", y = "Variety Score")
+
+# Arranging the plots side by side
+library(gridExtra)
+grid.arrange(p1, p2, nrow = 1)
+
+```
+

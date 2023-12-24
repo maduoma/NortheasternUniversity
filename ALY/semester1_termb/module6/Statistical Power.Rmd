@@ -1,0 +1,116 @@
+---
+title: "Statistical Power"
+output: html_notebook
+---
+
+```{r}
+# install package if needed 
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+# install.packages('dplyr')
+# install.packages('pwr')
+
+```
+
+```{r}
+# Load R packages
+library(ggplot2) # plotting
+library(tidyverse) # data processing
+library(dplyr) # data processing
+library(pwr) # calculating power, sample size, effect size, etc.
+
+```
+
+
+# Calculating sample size to given the type of hypothesis test, desired power, effect size, and significant level.
+
+```{r}
+# The pwr library can calculate the sample size (data points to simulate) required for different statistical tests to achieve the required statistical power. 
+
+# Use: Given 3 of the 4 quantities (sample size, effect size, significance level, power), find the 4th quantity.
+
+# Tests that can work in the pwr library: 
+
+# pwr.2p.test	two proportions (equal n)
+# pwr.2p2n.test	two proportions (unequal n)
+# pwr.anova.test	balanced one way ANOVA
+# pwr.chisq.test	chi-square test
+# pwr.f2.test	general linear model
+# pwr.p.test	proportion (one sample)
+# pwr.r.test	correlation
+# pwr.t.test	t-tests (one sample, 2 sample, paired, with equal n)
+# pwr.t2n.test	t-test (two samples with unequal n)
+
+# See more at the documentation: https://www.rdocumentation.org/packages/pwr/versions/1.3-0
+
+```
+
+
+```{r}
+# Ex 1: 2-sample t-test for means
+
+# Given sample 1 has 50 data points, sample 2 has 35 data points, the difference in the mean of the 2 samples is 0.5, sig level = 0.05 (conf level = 0.95), find the statistical power. 
+
+
+pwr.t2n.test(n1 = 50, n2 = 35, d = 0.5, sig.level = 0.05, alternative = 'two.sided')
+
+```
+```{r}
+# 1. Given sample 1 has 80 data points, sample 2 has 60 data points, the difference in the mean of the 2 samples is 0.3. Under a confidence level of 95%, find the statistical power achieved by a hypothesis test to test for the difference between the 2 means. Round the answer to nearest 2 decimals.
+pwr.t2n.test(n1 = 80, n2 = 60, d = 0.3, sig.level = 0.05, alternative = 'two.sided')
+
+```
+
+
+```{r}
+# Ex 2: 2-sample t-test for means
+
+# Given sample 1 has 50 data points, the difference (effect size) in the mean of the 2 samples is 0.5, sig level = 0.05, and desired statistical power = 90%, find the sample size needed for sample 2 (n2). 
+
+pwr.t2n.test(n1 = 50, d = 0.5, sig.level = 0.05, power = 0.9, alternative = 'two.sided') 
+
+```
+
+```{r}
+# Ex 3: 2-sample t-test for means (equal sample size)
+
+# Given both samples have 25 data points (n), the difference in the mean of the 2 samples is 0.75, sig level = 0.05, find the desired statistical power. 
+
+pwr.t.test(n = 25, d = 0.75, sig.level = 0.05, alternative = 'two.sided')
+
+```
+```{r}
+# 2. Given 2 samples both have 75 data points, the difference in the mean of the 2 samples is 0.5. Suppose a hypothesis test is conducted to test for the difference between the 2 means. Under a confidence level of 95%, find the statistical power that can be achieved by this test. Round the answer to nearest 2 decimals. 
+
+pwr.t.test(n = 75, d = 0.5, sig.level = 0.05, alternative = 'two.sided')
+```
+
+```{r}
+# Ex 4: 2-sample t-test for means (equal sample size)
+
+# Given both samples have 25 data points, the difference in the mean of the 2 samples is 0.75, sig level = 0.05, and statistical power of 0.8, find the sample size. 
+
+pwr.t.test(d = 0.75, sig.level = 0.05, power = 0.8, alternative = 'two.sided')
+
+```
+
+
+```{r}
+# Ex 5: 2-sample test for proportions (equal sample size)
+# Given significance level of 0.05, power of 0.75, effect size is 0.2, find the common sample size needed to achieve the above constraints.
+
+pwr.2p.test(h = 0.2, sig.level = 0.05, power = 0.75)
+
+```
+
+
+```{r}
+# Ex 6: One-way ANOVA 
+# H0 in ANOVA is mean 1 = mean 2 = ... = mean k
+# Given 5 groups (k), desired power of 0.8, effect size (f) of 0.25, sig level of 0.05, find the common sample size across all 5 groups. 
+
+pwr.anova.test(k = 5, f = 0.25, sig.level = 0.05, power = 0.8)
+
+
+```
+

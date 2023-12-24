@@ -1,0 +1,310 @@
+---
+title: "Introduction to R"
+# output: html_notebook
+output: pdf_document
+
+---
+
+```{r}
+# install packages if needed
+# install.packages('dplyr')
+# install.packages('ggplot2')
+
+# short-cut to run a block: ctrl + shft + enter
+# short-cut to run a line: ctrl + enter
+# short-cut to create a block for coding: ctrl + alt + I
+# move up/down blocks: ctrl + PgUp/PgDn
+
+```
+
+
+```{r}
+# import library (load a package) 
+library(ggplot2)
+library(dplyr)
+
+# import built-in data 
+data(mtcars)
+
+```
+
+
+```{r}
+mtcars
+```
+
+```{r}
+str(mtcars)
+
+```
+
+```{r}
+# Create Vectors
+
+x1 =  c(3,5,7) 
+x1 
+
+x2 = 3:8 
+x2
+
+x3 = seq(3, 8, by=0.5)
+x3
+
+x4 = rep(3:4, times=3)
+x4
+
+x5 = rep(5, times=3)
+x5
+
+x6 = rep(3:4, each=3)
+x6
+
+x7 = c('dog', 'cat', 'bird')
+x7
+
+
+
+```
+
+```{r}
+# Vector Functions
+
+y = rep(3:4, each=3)
+
+y
+
+sort(y, decreasing = FALSE)
+
+rev(y)
+
+table(y)
+
+unique(y)
+
+length(y)
+
+typeof(y)
+
+as.character(y)
+
+as.logical(0)
+as.logical(1)
+
+as.numeric(TRUE)
+as.numeric('123')
+
+```
+
+```{r}
+
+x2 = 3:8
+x2
+
+x2 = 8:3
+
+x2[3]
+
+x2[-3]
+
+x2[3:5]
+
+x2[-(3:5)]
+
+x2[c(1:4)]
+
+x2[x2==5]
+
+x2[x2>5]
+
+x2[x2 %in% c(3, 5, 7)]
+
+x2
+x2 + 1
+
+```
+
+```{r}
+
+a = 5
+b = 10
+c = 10
+
+a == b
+
+b == c
+
+a > b
+
+is.na(a)
+
+```
+
+```{r}
+
+y = c(1:10)
+y
+
+sum(y)
+
+log(y) 
+
+mean(y) 
+
+max(y)
+
+round(log(y), 3)  
+
+cor(y,log(y)) 
+
+var(y)
+
+sd(y)
+
+quantile(y)
+
+x = c(1,2,3,3,3,4,5,6,7) 
+
+x
+
+rank(x) 
+
+as.integer(rank(x)) 
+
+rank(x, ties.method = 'min')
+
+rank(-x, ties.method = 'min') 
+
+
+```
+
+
+
+```{r}
+# Create a matrix from x
+x = c(1:20)
+m = matrix(x, nrow = 5, ncol = 4)
+m
+
+m[2,]
+
+m[,3]
+
+m[5,3]
+
+t(m)
+
+```
+
+```{r}
+
+l = list(x = 5:10, y = c('a', 'b', 'c')) 
+l
+
+
+l[[2]]
+
+l[1]
+
+l$x 
+
+l['y']
+
+```
+
+
+```{r}
+summary(mtcars)
+
+nrow(mtcars)
+
+ncol(mtcars)
+
+dim(mtcars)
+
+colnames(mtcars)
+
+head(mtcars, n=5)
+
+tail(mtcars, n=5)
+
+mtcars[,2]
+
+mtcars[2,]
+
+mtcars[3,3]
+
+mtcars$mpg
+
+mtcars2 = mtcars
+
+df1 = cbind(mtcars, mtcars2)
+
+df1 
+
+dim(mtcars)
+dim(mtcars2)
+dim(df1)
+
+mtcars$hp > 200
+
+mtcars$hp[mtcars$hp > 200]
+
+df2 = rbind(mtcars, mtcars2)
+
+df2 
+
+dim(mtcars)
+dim(mtcars2)
+dim(df2)
+
+```
+
+
+```{r}
+x1 = c(1, 2, 3, 4, 5)
+x1 
+
+x1[1] = 100
+x1
+
+x1[1:3] = c(10, 20, 30)
+x1
+
+x1 = c(1, 2, 3, 4, 5)
+x1[c(1,3)] = c(10, 30)
+x1
+
+x1[c(2,4)] = 22
+x1
+
+data(mtcars)
+mtcars
+
+mtcars$hp[1:3] = 333
+mtcars
+
+mtcars$hp[mtcars$hp == 110] = 0
+mtcars
+
+mtcars$hp[mtcars$hp > 50 & mtcars$hp < 100] = 0
+mtcars
+
+mtcars$hp[mtcars$hp == 0 | mtcars$hp == 105] = 111
+mtcars
+
+
+```
+
+```{r}
+
+set.seed(100) 
+
+x = runif(n = 10, min = 0, max = 10) 
+x
+  
+x2 = rnorm(n = 10, mean = 0, sd = 1) 
+x2
+
+
+```
+

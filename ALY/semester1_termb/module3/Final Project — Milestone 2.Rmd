@@ -1,0 +1,307 @@
+---
+title: "Hypothesis Tests"
+output: html_notebook
+---
+
+```{r}
+# install package if needed 
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+```
+
+```{r}
+# Load R packages
+library(ggplot2)
+library(tidyverse)
+
+```
+
+```{r}
+
+churn_data <- read.csv("churn_data.csv")
+churn_data
+
+```
+```{r}
+# Look at the data
+head(churn_data)
+
+```
+
+```{r}
+# Load R packages
+library(ggplot2)
+library(readr)
+
+# Load the data set
+churn_data <- read_csv("churn_data.csv", show_col_types = FALSE)
+
+# Specify the variable of interest
+variable_name <- "MonthlyCharge"  # Replace with your chosen variable
+
+# Look at the first 10 values in the specified variable
+head(churn_data$MonthlyCharge, 10)
+
+# Get summary statistics of the specified variable
+summary(churn_data$MonthlyCharge)
+#summary(churn_data$percollege)
+# Plotting
+# Set plot size
+options(repr.plot.width=6, repr.plot.height=3)
+
+
+# Histogram of MonthlyCharge
+ggplot(churn_data, aes(MonthlyCharge)) + geom_histogram()
+
+# Boxplot of MonthlyCharge
+ggplot(churn_data, aes(MonthlyCharge)) + geom_boxplot() + coord_flip()
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+# Load required libraries
+library(readr)
+
+# Load the data set
+churn_data <- read_csv("churn_data.csv", show_col_types = FALSE)  # Replace with the correct file path
+
+# Prepares data for Hypothesis Test 1: Compares mean monthly charge for customers who churned against overall mean
+# Selects customers who churned
+churned_customers <- subset(churn_data, Churn == 1)
+
+# Calculates the overall mean of monthly charge
+overall_mean_monthly_charge <- mean(churn_data$MonthlyCharge)
+
+# Performs one-sample t-test for Question 1
+# Tests if the mean monthly charge for churned customers differs from the overall mean
+t_test_result_1 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge)
+
+# Prints results of the one-sample t-test
+print(t_test_result_1)
+
+# Prepares data for Hypothesis Test 2: Compares number of customer service calls between customers with and without data plans
+# Selects customers with and without data plans
+customers_with_plan <- subset(churn_data, DataPlan == 1)
+customers_without_plan <- subset(churn_data, DataPlan == 0)
+
+# Performs two-sample t-test for Question 2
+# Tests if there's a difference in the number of customer service calls between the two groups
+t_test_result_2 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE)
+
+# Prints results of the two-sample t-test
+print(t_test_result_2)
+
+```
+```{r}
+# Loads the necessary library
+library(readr)
+
+# Loads the churn_data.csv data set
+churn_data <- read_csv("churn_data.csv", show_col_types = FALSE)  # Replace with the correct file path
+
+# Prepares data for Hypothesis Test 1: Compares mean monthly charge for customers who churned against overall mean
+# Selects customers who have churned
+churned_customers <- subset(churn_data, Churn == 1)
+
+# Calculates the overall mean of the monthly charge
+overall_mean_monthly_charge <- mean(churn_data$MonthlyCharge)
+
+# Performs one-sample t-test for Question 1
+# Tests if the mean monthly charge for churned customers is higher than the overall mean
+t_test_result_1 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge)
+
+# Prepares data for Hypothesis Test 2: Compares number of customer service calls between customers with and without data plans
+# Selects customers with and without data plans
+customers_with_plan <- subset(churn_data, DataPlan == 1)
+customers_without_plan <- subset(churn_data, DataPlan == 0)
+
+# Performs two-sample t-test for Question 2
+# Tests if there is a difference in the number of customer service calls between the two groups
+t_test_result_2 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE)
+print(t_test_result_2)
+
+```
+```{r}
+# Load required library
+library(readr)
+
+# Load the data set
+churn_data <- read_csv("churn_data.csv", show_col_types = FALSE)  # Replace with the correct file path
+
+# Prepare data for hypothesis tests
+churned_customers <- subset(churn_data, Churn == 1)
+overall_mean_monthly_charge <- mean(churn_data$MonthlyCharge)
+customers_with_plan <- subset(churn_data, DataPlan == 1)
+customers_without_plan <- subset(churn_data, DataPlan == 0)
+
+# One-sample t-test for Question 1 at 90%, 95%, and 99% confidence levels
+t_test_result_1_90 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.90)
+t_test_result_1_95 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.95)
+t_test_result_1_99 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.99)
+
+# Print results for Question 1
+print(t_test_result_1_90)
+print(t_test_result_1_95)
+print(t_test_result_1_99)
+
+# Two-sample t-test for Question 2 at 90%, 95%, and 99% confidence levels
+t_test_result_2_90 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.90)
+t_test_result_2_95 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.95)
+t_test_result_2_99 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.99)
+
+# Print results for Question 2
+print(t_test_result_2_90)
+print(t_test_result_2_95)
+print(t_test_result_2_99)
+
+```
+```{r}
+# Loads the necessary library
+library(readr)
+
+# Loads the churn_data.csv data set
+churn_data <- read_csv("churn_data.csv", show_col_types = FALSE)  # Replace with the correct file path
+
+# Prepares data for Hypothesis Test 1
+# Selects customers who have churned
+churned_customers <- subset(churn_data, Churn == 1)
+
+# Calculates the overall mean of monthly charges for all customers
+overall_mean_monthly_charge <- mean(churn_data$MonthlyCharge)
+
+# Prepares data for Hypothesis Test 2
+# Selects customers with and without data plans
+customers_with_plan <- subset(churn_data, DataPlan == 1)
+customers_without_plan <- subset(churn_data, DataPlan == 0)
+
+# Performs one-sample t-test for Question 1 at 90% confidence level
+# Tests if the mean monthly charge for churned customers is different from the overall mean
+t_test_result_1_90 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.90)
+
+# Prints the result of the one-sample t-test at 90% confidence level
+print(t_test_result_1_90)
+
+# Repeats the one-sample t-test for 95% confidence level
+t_test_result_1_95 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.95)
+
+# Prints the result of the one-sample t-test at 95% confidence level
+print(t_test_result_1_95)
+
+# Repeats the one-sample t-test for 99% confidence level
+t_test_result_1_99 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.99)
+
+# Prints the result of the one-sample t-test at 99% confidence level
+print(t_test_result_1_99)
+
+# Performs two-sample t-test for Question 2 at 90% confidence level
+# Tests if there is a difference in the number of customer service calls between customers with and without data plans
+t_test_result_2_90 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.90)
+
+# Prints the result of the two-sample t-test at 90% confidence level
+print(t_test_result_2_90)
+
+# Repeats the two-sample t-test for 95% confidence level
+t_test_result_2_95 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.95)
+
+# Prints the result of the two-sample t-test at 95% confidence level
+print(t_test_result_2_95)
+
+# Repeats the two-sample t-test for 99% confidence level
+t_test_result_2_99 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.99)
+
+# Prints the result of the two-sample t-test at 99% confidence level
+print(t_test_result_2_99)
+
+```
+```{r}
+# Load necessary library
+library(readr)
+
+# Load the data set
+churn_data <- read_csv("churn_data.csv", show_col_types = FALSE)  # Replace with the correct file path
+
+# Prepare data for hypothesis tests
+churned_customers <- subset(churn_data, Churn == 1)
+overall_mean_monthly_charge <- mean(churn_data$MonthlyCharge)
+customers_with_plan <- subset(churn_data, DataPlan == 1)
+customers_without_plan <- subset(churn_data, DataPlan == 0)
+
+# One-sample t-test for Question 1 at different confidence levels
+t_test_result_1_90 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.90)
+t_test_result_1_95 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.95)
+t_test_result_1_99 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.99)
+
+# Print results for One Sample t-test at different confidence levels
+print("One Sample t-test at 90% Confidence Level:")
+print(t_test_result_1_90)
+
+print("One Sample t-test at 95% Confidence Level:")
+print(t_test_result_1_95)
+
+print("One Sample t-test at 99% Confidence Level:")
+print(t_test_result_1_99)
+
+# Two-sample t-test for Question 2 at different confidence levels
+t_test_result_2_90 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.90)
+t_test_result_2_95 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.95)
+t_test_result_2_99 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.99)
+
+# Print results for Two Sample t-test at different confidence levels
+print("Welch Two Sample t-test at 90% Confidence Level:")
+print(t_test_result_2_90)
+
+print("Welch Two Sample t-test at 95% Confidence Level:")
+print(t_test_result_2_95)
+
+print("Welch Two Sample t-test at 99% Confidence Level:")
+print(t_test_result_2_99)
+
+```
+```{r}
+# Load the data set
+churn_data <- read_csv("churn_data.csv", show_col_types = FALSE)  # Replace with the correct file path
+
+# Prepare data for hypothesis tests
+churned_customers <- subset(churn_data, Churn == 1)
+overall_mean_monthly_charge <- mean(churn_data$MonthlyCharge)
+customers_with_plan <- subset(churn_data, DataPlan == 1)
+customers_without_plan <- subset(churn_data, DataPlan == 0)
+
+# Perform One Sample t-test at different confidence levels
+t_test_result_1_90 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.90)
+t_test_result_1_95 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.95)
+t_test_result_1_99 <- t.test(churned_customers$MonthlyCharge, mu = overall_mean_monthly_charge, conf.level = 0.99)
+
+# Print results for One Sample t-test
+cat("One Sample t-test Results:\n")
+print(t_test_result_1_90)
+print(t_test_result_1_95)
+print(t_test_result_1_99)
+cat("\n----------------------------------------\n")
+
+# Perform Welch Two Sample t-test at different confidence levels
+t_test_result_2_90 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.90)
+t_test_result_2_95 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.95)
+t_test_result_2_99 <- t.test(customers_with_plan$CustServCalls, customers_without_plan$CustServCalls, equal.var = FALSE, conf.level = 0.99)
+
+# Print results for Welch Two Sample t-test
+cat("Welch Two Sample t-test Results:\n")
+print(t_test_result_2_90)
+print(t_test_result_2_95)
+print(t_test_result_2_99)
+```
+
+

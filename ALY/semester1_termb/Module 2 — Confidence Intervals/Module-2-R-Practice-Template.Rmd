@@ -1,0 +1,383 @@
+---
+title: "Module-2-R-Practice-Template.Rmd"
+output: html_document
+---
+
+```{r}
+# Install the libraries if needed
+
+# install package if needed 
+# install.packages("fitdistrplus")
+# install.packages("actuar")
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+
+# Load R packages
+library(fitdistrplus)
+library(actuar)
+library(stats)
+library(ggplot2)
+library(tidyverse)
+library(gridExtra)
+
+```
+
+
+
+```{r}
+# 1. Use the Walmart data. These are the survey responses of a sample of Walmart customers. Create a sample distribution of the time since last purchase for a customer i.e. Create a histogram of the variable Time_Since_Last_Purchase.
+
+# Which distribution does the variable Time_Since_Last_Purchase mostly likely follow?
+
+# Reads the data from CSV
+walmart_data <- read.csv("walmart_data.csv")
+
+# Create a histogram
+ggplot(walmart_data, aes(x = Time_Since_Last_Purchase)) +
+  geom_histogram(bins = 30, fill="blue", color="black") +
+  labs(title="Histogram of Time Since Last Purchase",
+       x="Time Since Last Purchase (in days)",
+       y="Frequency") +
+  theme_minimal()
+
+```
+
+```{r}
+# 2. Use the Walmart data. These are the survey responses of a sample of Walmart customers. Create a sampling distribution using 1000 samples drawn for the time since last purchase for a customer. i.e. Draw 1000 samples from the variable Time_Since_Last_Purchase and calculate the sample mean for each sample. Create a histogram of the sample means. 
+
+# Which distribution does the sampling distribution of Time_Since_Last_Purchase most likely follow?
+
+# This is the number of samples to draw
+n <- 1000 
+
+# Create an empty vector to store sample means
+sample_means <- numeric(n)
+
+# Draws samples and calculates means
+for (i in 1:n) {
+  sample <- sample(walmart_data$Time_Since_Last_Purchase, size = n, replace = TRUE)
+  sample_means[i] <- mean(sample)
+}
+
+# Creates a histogram of the sample means
+hist(sample_means, main="Histogram of Sample Means of Time Since Last Purchase", 
+     xlab="Sample Mean", ylab="Frequency", col="blue", border="black")
+
+```
+
+```{r}
+# 3. Use the Walmart data. These are the survey responses of a sample of Walmart customers. Create a sample distribution of the amount of spending by a customer last year. i.e. Create a histogram of the variable Spending_Last_Year. 
+
+# Which distribution does the variable Spending_Last_Year mostly likely follow?
+
+
+# Creates a histogram
+ggplot(walmart_data, aes(x = Spending_Last_Year)) +
+  geom_histogram(bins = 30, fill="blue", color="black") +
+  labs(title="Histogram of Spending Last Year",
+       x="Spending Last Year ($)",
+       y="Frequency") +
+  theme_minimal()
+
+
+```
+
+```{r}
+# 4. Use the Walmart data. These are the survey responses of a sample of Walmart customers. Create a sampling distribution using 1000 samples drawn for the spending by a customer last year. i.e. Draw 1000 samples from the variable Spending_Last_Year and calculate the sample mean for each sample. Create a histogram of the sample means. 
+
+# Which distribution does the sampling distribution of Spending_Last_Year most likely follow?
+
+# This is the number of samples to draw
+n <- 1000 
+
+# Creates an empty vector to store sample means
+sample_means_spending <- numeric(n)
+
+# Draws samples and calculates means
+for (i in 1:n) {
+  sample <- sample(walmart_data$Spending_Last_Year, size = n, replace = TRUE)
+  sample_means_spending[i] <- mean(sample)
+}
+
+# Creates a histogram of the sample means
+hist(sample_means_spending, main="Histogram of Sample Means of Spending Last Year", 
+     xlab="Sample Mean", ylab="Frequency", col="blue", border="black")
+
+
+```
+
+```{r}
+# 5. Use the Walmart data. Use the t.test() function to find the 95% confidence interval for the mean time since last purchase for a customer last year. Use paired = False, alternative = 'two.sided' in the t.test() function.
+
+# What is the lower bound of the confidence interval? 
+
+# What is the upper bound of the confidence interval? 
+
+# Round the answers to nearest 2 decimals. 
+
+
+# Performs a t-test to find the 95% confidence interval for the mean
+t_test_result <- t.test(walmart_data$Time_Since_Last_Purchase, paired = FALSE, alternative = 'two.sided')
+
+# Extracting the confidence interval
+conf_interval <- t_test_result$conf.int
+
+# Lower and Upper bounds of the confidence interval, rounded to 2 decimals
+lower_bound <- round(conf_interval[1], 2)
+upper_bound <- round(conf_interval[2], 2)
+
+# Prints the results
+cat("Lower Bound of Confidence Interval:", lower_bound, "\n")
+cat("Upper Bound of Confidence Interval:", upper_bound, "\n")
+
+#The resulting output relate to performing a t-test on the 'Time_Since_Last_Purchase' data from the Walmart data set. The goal of this test is to determine the 95% confidence interval for the mean time since the last purchase by Walmart customers.
+
+#The t-test is an appropriate statistical tool when you want to estimate the mean of a population and the population standard #deviation is unknown. It's widely used for smaller sample sizes or when the data does not necessarily follow a normal #distribution.
+
+#The output of this test:
+
+#"Lower Bound of Confidence Interval: 9.11"
+#"Upper Bound of Confidence Interval: 11.37"
+#This means that based on the sample data from Walmart, we can be 95% confident that the true mean of the #'Time_Since_Last_Purchase' for the entire customer population lies between 9.11 and 11.37 days. In other words, the average #number of days since the last purchase for all Walmart customers is estimated to fall within this range with a 95% level of #confidence.
+
+#This confidence interval gives us an idea of the precision of our estimate of the mean time since the last purchase. A narrower #interval would indicate a more precise estimate, while a wider interval would suggest less precision.
+
+
+```
+
+
+```{r}
+# 6. Use the Walmart data. Use the t.test() function to find the 95% confidence interval for the mean spending by a customer last year. Use paired = False, alternative = 'two.sided' in the t.test() function.
+
+# What is the lower bound of the confidence interval? 
+
+# What is the upper bound of the confidence interval? 
+
+# Round the answers to nearest 2 decimals. 
+
+
+# Performs a t-test to find the 95% confidence interval for the mean
+t_test_result_spending <- t.test(walmart_data$Spending_Last_Year, paired = FALSE, alternative = 'two.sided')
+
+# Extracts the confidence interval
+conf_interval_spending <- t_test_result_spending$conf.int
+
+# These are the Lower and Upper bounds of the confidence interval, rounded to 2 decimals
+lower_bound_spending <- round(conf_interval_spending[1], 2)
+upper_bound_spending <- round(conf_interval_spending[2], 2)
+
+# Prints the results
+cat("Lower Bound of Confidence Interval for Spending Last Year:", lower_bound_spending, "\n")
+cat("Upper Bound of Confidence Interval for Spending Last Year:", upper_bound_spending, "\n")
+
+#The outputs are about performing a t-test on the 'Spending_Last_Year' data from the Walmart data set, aiming to determine the 95% confidence interval for the mean spending by a customer last year.
+
+#The t-test is a statistical test that is useful for comparing the mean of a sample to a known value (in this case, the mean #spending of Walmart customers). It's particularly effective in cases where the population standard deviation is unknown and the #sample size is small or does not strictly adhere to a normal distribution.
+
+#The results of this test:
+
+#"Lower Bound of Confidence Interval for Spending Last Year: 1047.16"
+"Upper Bound of Confidence Interval for Spending Last Year: 1052.21"
+#These results indicate that, based on the sampled data, we can be 95% confident that the true average spending of all Walmart #customers last year falls between $1047.16 and $1052.21. This range represents our best estimate for the average annual #spending of a Walmart customer, with a 95% level of confidence.
+
+#The relatively narrow range of this confidence interval suggests a high level of precision in our estimate of the average #spending. It provides valuable insights into customer spending behavior, which can be utilized for business analysis, marketing #strategies, and financial forecasting.
+```
+
+
+
+```{r}
+# 7. Use the Walmart data. Use the prop.test() function to find the 95% confidence interval for the proportion of customers who made a purchase last month (Shopped_Last_Month). 
+
+# What is the lower bound of the confidence interval? 
+
+# What is the upper bound of the confidence interval? 
+
+# Round the answers to nearest 2 decimals. 
+
+# Calculates the count of customers who did not shop last month
+count_0 <- sum(walmart_data$Shopped_Last_Month == 0)
+
+# Calculate the count of customers who shopped last month
+count_1 <- sum(walmart_data$Shopped_Last_Month == 1)
+
+# Total number of observations
+n <- length(walmart_data$Shopped_Last_Month)
+
+# Performs a two-sample z-test for proportions
+prop_test_result <- prop.test(c(count_0, count_1), c(n, n), alternative = 'two.sided', conf.level = 0.95)
+
+# Extracts the confidence interval from the test results
+ci <- prop_test_result$conf.int
+
+# Rounds the confidence interval bounds to 2 decimal places
+ci_lower <- round(ci[1], 2)
+ci_upper <- round(ci[2], 2)
+
+# Prints the rounded confidence interval bounds
+cat("Lower Bound of Confidence Interval:", ci_lower, "\n")
+cat("Upper Bound of Confidence Interval:", ci_upper, "\n")
+
+#The output, "Lower Bound of Confidence Interval: 0.21, Upper Bound of Confidence Interval: 0.38," represents the 95% #confidence interval for a proportion derived from a statistical test (likely a two-sample z-test for proportions). This #interval suggests that, with 95% confidence, the true proportion of the population being studied (in this case, customers who #either shopped or did not shop last month at Walmart) lies between 21% and 38%.
+
+#In practical terms, if this confidence interval pertains to the proportion of customers who shopped last month, it means we can #be 95% confident that between 21% to 38% of all customers made a purchase last month. This range provides a measure of the #reliability and precision of the estimated proportion, indicating that the true proportion is likely within these bounds, based #on the sample data analyzed.
+
+```
+
+```{r}
+# 8. Use the Walmart data. Use the prop.test() function to find the 99% confidence interval for the proportion of customers who made a purchase last month (Shopped_Last_Month). 
+
+# What is the lower bound of the confidence interval? 
+
+# What is the upper bound of the confidence interval? 
+
+# Round the answers to nearest 2 decimals. 
+
+
+# The 'walmart_data' is your data frame and 'Shopped_Last_Month' is the column name
+
+# Calculates the number of customers who did not shop last month
+count_0 <- sum(walmart_data$Shopped_Last_Month == 0)
+
+# Calculates the number of customers who shopped last month
+count_1 <- sum(walmart_data$Shopped_Last_Month == 1)
+
+# Total number of customers in the data set
+n <- length(walmart_data$Shopped_Last_Month)
+
+# Performs a two-sample z-test for proportions
+# This test compares the proportion of customers who did not shop to those who did
+prop_test_result <- prop.test(c(count_0, count_1), c(n, n), alternative = 'two.sided', conf.level = 0.99)
+
+# Extracts the confidence interval from the test result
+ci <- prop_test_result$conf.int
+
+# Rounds the confidence interval bounds to 2 decimal places
+ci_lower <- round(ci[1], 2)
+ci_upper <- round(ci[2], 2)
+
+# Prints the rounded confidence interval bounds
+cat("Lower Bound of Confidence Interval:", ci_lower, "\n")
+cat("Upper Bound of Confidence Interval:", ci_upper, "\n")
+
+
+# The output "Lower Bound of Confidence Interval: 0.18, Upper Bound of Confidence Interval: 0.4" represents the 99% confidence # interval for a proportion determined through a statistical analysis (likely a two-sample z-test for proportions).
+
+#In this context, the confidence interval indicates that, with 99% certainty, the true proportion of the population being #examined (such as the proportion of Walmart customers who either shopped or did not shop last month) falls between 18% and 40%.
+
+#This wider interval, as compared to a 95% confidence interval, reflects a higher degree of certainty about where the true #proportion lies. In practical terms, if this is related to the proportion of customers who shopped last month, it implies that #we are 99% confident that the actual percentage of all customers who made a purchase last month is somewhere between 18% and #40%. The 99% confidence level provides a higher level of assurance about the estimate, but it also results in a broader range, #reflecting increased uncertainty about the precise proportion.
+
+```
+
+```{r}
+# 9. Use the Walmart data. Use the prop.test() function to find the 90% confidence interval for the proportion of customers who made a purchase last month (Shopped_Last_Month). 
+
+# What is the lower bound of the confidence interval? 
+
+# What is the upper bound of the confidence interval? 
+
+# Round the answers to nearest 2 decimals. 
+
+# The 'walmart_data' is your data frame and 'Shopped_Last_Month' is the column name
+
+# Calculates the number of customers who did not shop last month
+count_0 <- sum(walmart_data$Shopped_Last_Month == 0)
+
+# Calculates the number of customers who shopped last month
+count_1 <- sum(walmart_data$Shopped_Last_Month == 1)
+
+# Total number of customers in the data set
+n <- length(walmart_data$Shopped_Last_Month)
+
+# Performs a two-sample z-test for proportions
+# This test compares the proportion of customers who did not shop to those who did
+prop_test_result <- prop.test(c(count_0, count_1), c(n, n), alternative = 'two.sided', conf.level = 0.90)
+
+# Extract the confidence interval from the test result
+ci <- prop_test_result$conf.int
+
+# Rounds the confidence interval bounds to 2 decimal places
+ci_lower <- round(ci[1], 2)
+ci_upper <- round(ci[2], 2)
+
+# Prints the rounded confidence interval bounds
+cat("Lower Bound of Confidence Interval:", ci_lower, "\n")
+cat("Upper Bound of Confidence Interval:", ci_upper, "\n")
+
+#The output "Lower Bound of Confidence Interval: 0.22, Upper Bound of Confidence Interval: 0.36" represents the 90% confidence #interval for a proportion determined through a statistical test, likely a two-sample z-test for proportions.
+
+#This confidence interval suggests that, with 90% certainty, the true proportion of the population being analyzed (such as the #proportion of Walmart customers who shopped or did not shop last month) lies between 22% and 36%.
+
+#Since this is a 90% confidence interval, it offers a lower degree of certainty compared to a 95% or 99% confidence interval, #but as a trade-off, it provides a narrower range. In practical terms, if this interval pertains to the proportion of customers #who shopped last month, it implies we can be 90% confident that the actual percentage of all customers who made a purchase last #month is somewhere between 22% and 36%. The 90% confidence level indicates a moderate level of assurance about the estimate, #with a relatively tighter range indicating less uncertainty about the precise proportion
+
+
+```
+
+```{r}
+# 10. In the question above, which confidence level generates the widest confidence interval? 
+
+#In statistics, the width of a confidence interval is directly related to the level of confidence chosen. A higher confidence #level results in a wider confidence interval, while a lower confidence level leads to a narrower interval. This is because a #higher confidence level requires more range to ensure that the true population parameter is captured within the interval.
+
+#From the questions above, three different confidence levels were used: 90%, 95%, and 99%. Among these:
+
+#A 90% confidence level will generate the narrowest confidence interval.
+#A 95% confidence level will provide a wider interval than the 90% level.
+#A 99% confidence level will generate the widest confidence interval of all.
+
+##Therefore, the confidence level that generates the widest confidence interval is the 99% confidence level.
+
+```
+
+99%
+
+
+```{r}
+# 11. # In a report of up to 4 pages. Include the following: 
+
+# - Choose 2 more variables from the Walmart data. For each variable: 
+# - Create a sample distribution. 
+# - Create a sampling distribution using 10,000 samples drawn. 
+# - Compare the sample distribution with the sampling distribution. Describe the shape of both distributions. What is the theorem that predicts the sampling distribution will approach the normal distribution when a large number of samples are drawn?
+
+# In up to 300 words, describe a situation or problem from your job, everyday life, current events, etc., for which a confidence interval would be useful for decision making. Describe the business problem and stakeholders. i.e. Who (person, group, organization) would be interested in solving this business problem? Describe up to 5 variables that can be used.
+
+
+# A Function to create both sample distribution and sampling distribution plots
+create_plots <- function(data, variable, n_samples=10000, sample_size=100) {
+  # Sample Distribution Plot
+  p1 <- ggplot(data, aes(x = .data[[variable]])) +
+        geom_histogram(bins=30, fill="skyblue", color="black") +
+        labs(title=paste('Sample Distribution of', '\n', variable),
+             x=variable, y='Frequency')
+
+  # Sampling Distribution Plot
+  sample_means <- replicate(n_samples, mean(sample(data[[variable]], size=sample_size, replace=TRUE)))
+  df_means <- data.frame(SampleMeans = sample_means)
+  p2 <- ggplot(df_means, aes(x=SampleMeans)) +
+        geom_histogram(bins=30, fill="lightgreen", color="black") +
+        labs(title=paste('Sampling Distribution of', '\n', variable),
+             x='Sample Mean', y='Frequency')
+
+  # Arrange plots in grid
+  grid.arrange(p1, p2, ncol = 2)
+}
+
+# Read the data
+walmart_data <- read.csv('walmart_data.csv') # Replace with the correct path
+
+# Choose two additional variables
+additional_var1 <- 'Walmart_Fair_Prices'
+additional_var2 <- 'Walmart_Store_Layout'
+
+# Create plots for the first additional variable
+create_plots(walmart_data, additional_var1)
+
+# Create plots for the second additional variable
+create_plots(walmart_data, additional_var2)
+
+```
+
+```{r}
+# 12. Upload a R Markdown file with all code and visualizations used to answer all questions above. You may use the template Module-2-R-Practice-Template.Rmd. 
+
+```
+

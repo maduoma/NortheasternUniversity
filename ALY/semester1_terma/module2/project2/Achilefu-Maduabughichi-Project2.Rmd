@@ -1,0 +1,492 @@
+---
+title: "Achilefu-Maduabughichi-Project2.Rmd"
+output: html_document
+---
+
+
+```{r}
+cat("\014") # clears console 
+rm(list = ls()) # clears global environment 
+try(dev.off(dev.list()["RStudioGD"]), silent = TRUE) # clears plots 
+try(p_unload(p_loaded(), character.only = TRUE), silent = TRUE) # clears packages 
+options(scipen = 100) # disables scientific notation for entire R session
+
+# You should do this line only once in the entire course. 
+# install.packages("pacman") 
+
+# Makes installing and loading other packages a one-line process.
+library(pacman)
+p_load(testthat) 
+p_load(tidyverse)
+p_load(ggplot2)
+
+```
+
+# Assignment Part 1
+
+```{r}
+# 1. Read the data set 2015.csv and store it in a variable called data_2015. You can test that you loaded it correctly with the code utilizing the head function below.
+
+# Reads the CSV file
+data_2015 <- read.csv("2015.csv")
+
+# Displays the first few rows of the dataset
+head(data_2015)
+
+```
+
+```{r}
+# 2. Use the function names to produce the column names for your data set.
+
+# Prints the column names
+names(data_2015)
+
+```
+
+```{r}
+# 3. Use the view function to view the data set in a separate tab.
+
+# Views the data set in a separate tab
+# view(data_2015)
+data_2015
+
+```
+
+```{r}
+# 4. Use the glimpse function to view your data set in another configuration.
+
+# Views the data set in different configuration or format
+glimpse(data_2015)
+
+```
+
+```{r}
+# 5. Use p_load to install the janitor package. Janitor has a function called clean_names that can be given a data frame to make the names more R friendly. Be sure to store the resulting converted data frame in a variable (use data_2015 again). Compare the columns names now to the ones before.
+
+# Gets the janitor package
+p_load(janitor)
+
+data_2015 <- clean_names(data_2015)
+
+# Prints the column names
+data_2015
+
+```
+
+```{r}
+# 6. 	Select from the data set the country, region, happiness_score, and freedom columns. Store this new table as happy_df.
+
+# Country, region, happiness score, and freedom and saves them in happy_df variable
+happy_df <- select(data_2015, country, region, happiness_score, freedom)
+
+# Displays some few column names to make sure everything is fine
+happy_df
+
+```
+
+```{r}
+# 7. Slice the first 10 rows from happy_df and store it as top_ten_df.
+top_ten_df <- slice(happy_df, 1:10)
+
+# Displays the first 10 rows
+top_ten_df
+
+```
+
+```{r}
+# 8. From happy_df filter the table for freedom values under 0.20. Store this new table as no_freedom_df.
+
+# Filters the happy_df table for freedom values under 0.20.
+no_freedom_df <- filter(happy_df, freedom < 0.20)
+
+# Displays the freedom values under 0.20
+no_freedom_df
+```
+
+```{r}
+# 9. Arrange the values in happy_df in descending order by their freedom values. Store this new table as best_freedom_df.
+
+# Arranges the happy_df table in descending order by freedom values.
+best_freedom_df <- arrange(happy_df, desc(freedom))
+
+# Displays happy_df table in descending order by freedom values
+best_freedom_df
+```
+
+
+```{r}
+# 10. Create a new column with mutate in data_2015 called gff_stat. For each row, the gff_stat is the sum of the family, freedom, and generosity values. Store the resulting table right in the data_2015 variable.
+
+# Combines gff_stat = family + freedom + generosity to get the gff_stat for each country.
+data_2015 <- mutate(data_2015, gff_stat = family + freedom + generosity)
+
+# Displays 
+data_2015
+  
+```
+
+
+
+```{r}
+# 11. Summarize the happy_df data set. Your summary should contain the mean happiness_score in a column called mean_happiness, the max happiness_score in a column called max_happiness, the mean freedom in a column called mean_freedom, and the max freedom in a column called max_freedom. Store the resulting table as happy_summary.
+
+# 
+
+happy_summary <- happy_df %>% 
+  summarize(
+    mean_happiness = mean(happiness_score, na.rm = TRUE), # Finds average happiness score
+    max_happiness = max(happiness_score, na.rm = TRUE), # Gives the happiest of the happy value
+    mean_freedom = mean(freedom, na.rm = TRUE), # Gives the freedom values on average.
+    max_freedom = max(freedom, na.rm = TRUE)# Gives boundless freedom values
+  )
+
+# Reveals the summary of the data set
+happy_summary
+
+```
+
+```{r}
+# 12. Group the happy_df data set by region. Run a summary that provides the number of countries in each region in a column called country_count, the mean happiness for each region in a column called mean_happiness, and the mean freedom of each region in a column called mean_freedom. Store your resulting table in a variable called regional_stats_df.
+
+# Explores the regions
+regional_stats_df <- happy_df %>% 
+  group_by(region) %>%  # Groups or gathers regions
+  summarize(
+    country_count = n(),  # Counts the nations in each region
+    mean_happiness = mean(happiness_score, na.rm = TRUE),  # Averages joy of each region.
+    mean_freedom = mean(freedom, na.rm = TRUE) # The average sense of freedom across regions
+  ) %>% 
+  ungroup()  # Sets each region free after the grouping
+
+# Prints the regional values
+regional_stats_df
+
+```
+
+```{r}
+# 13. [Challenge Problem] Compare the average gdp per capita of the ten least happy Western European countries with the ten happiest Sub-Saharan African countries. For testing, you can store the resulting data.frame or table as gdp_df.
+
+
+# Use the column name directly for GDP per capita
+gdp_column_name <- "economy_gdp_per_capita"
+
+# Explore the ten least happy Western European countries
+west_europe_least_happy <- data_2015 %>%
+  filter(region == "Western Europe") %>% 
+  arrange(happiness_score) %>% 
+  head(10) %>%
+  summarize(avg_gdp = mean(.data[[gdp_column_name]], na.rm = TRUE))
+
+# Explore the ten happiest Sub-Saharan African countries
+sub_sahara_happiest <- data_2015 %>%
+  filter(region == "Sub-Saharan Africa") %>% 
+  arrange(desc(happiness_score)) %>% 
+  head(10) %>%
+  summarize(avg_gdp = mean(.data[[gdp_column_name]], na.rm = TRUE))
+
+# Combine the results from both regions into one data frame
+gdp_df <- bind_rows(west_europe = west_europe_least_happy, sub_sahara = sub_sahara_happiest)
+
+# Display the resulting data frame
+gdp_df
+
+
+
+```
+
+
+
+```{r}
+# 14. [Challenge problem] From your regional_stats_df, create a scatterplot of mean_happiness vs. mean_freedom. Draw a line segment from the smallest of these values to the largest.
+
+# Draws the scatterplot of mean_happiness and mean_freedom
+ggplot(regional_stats_df, aes(x = mean_freedom, y = mean_happiness)) +
+  geom_point(aes(color = region), size = 4) +  # The dancing stars representing regions
+  geom_segment(aes(x = min(mean_freedom), xend = max(mean_freedom),
+                   y = min(mean_happiness), yend = max(mean_happiness)), 
+               linetype = "dashed", color = "midnightblue") +  # The guiding constellation
+  labs(title = "Dance of Happiness and Freedom: A Regional Ballet",
+       x = "Mean Freedom",
+       y = "Mean Happiness") +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  guides(color = guide_legend(title = "Regions"))
+
+
+```
+
+# Assignment Part 2
+
+```{r}
+# 1. Download the baseball.csv data set. data set that represents batting statistics from the 1986 Major League Baseball season. Read this data set in a variable called baseball.
+
+# Reads the data set into the variable baseball
+baseball <- read.csv('baseball.csv')
+
+# Displays the first few rows of the data set
+head(baseball)
+
+```
+
+```{r}
+# 2. Spend time with the data using various exploration functions to get a general feel for what you are working with. For more information on this data set and its various columns, see Baseball Reference’s  1986 Major League Standard Batting.
+
+
+# Displays the first few rows of the data set
+head(baseball)
+
+# Displays the last few rows
+tail(baseball)
+
+# Check the structure of the data set
+str(baseball)
+
+# Displays the summary statistics to get an idea of the central tendency and spread
+summary(baseball)
+
+# This line helps to see how many unique players are in the data set
+length(unique(baseball$playerID))
+
+# Displays the distribution for runs or home runs
+hist(baseball$R, main="Distribution of Runs", xlab="Runs", col="lightblue", border="black")
+
+# Each bar in this histogram gives the distribution of runs among the stars.
+hist(baseball$HR, main="Distribution of Home Runs", xlab="Home Runs", col="lightcoral", border="black")
+
+# Displays a scatter plot of hits versus runs showing some patterns
+plot(baseball$H, baseball$R, main="Hits vs Runs", xlab="Hits", ylab="Runs", col="darkgreen", pch=16)
+
+```
+
+
+```{r}
+# 3. Use the class function to discover the type of class represented in the baseball data set.
+ 
+class(baseball)
+
+```
+
+
+```{r}
+# 4. For each age, compute the following: the number of people at that age, the average number of home runs (HRs), the average number of hits, and the average number of runs scored. Store these computations in a variable called age_stats_df.
+
+# Loads dplyr package
+library(dplyr)
+
+# Calculates the stats for each age
+age_stats_df <- baseball %>%
+  group_by(Age) %>%  # Groups by Age
+  summarise(
+    count = n(),  # Counts the number of people of that age
+    HR = mean(HR, na.rm = TRUE),  # Calculates the average home runs
+    H = mean(H, na.rm = TRUE),  # Calculates the average hits
+    R = mean(R, na.rm = TRUE)   # Calculates the average runs
+  )
+
+# Displays the results
+age_stats_df
+
+
+```
+
+```{r}
+# 5. Remove (filter) from baseball any player with 0 at bats (AB). Store the result in baseball.
+
+# Filters out players with 0 at bats
+baseball <- baseball %>%
+  filter(AB != 0)
+
+# Displays the result of the new filtered data set
+head(baseball)
+```
+
+```{r}
+# 6. Add a new column batting average called BA. Batting average is computed by the number of hits (H) divided by the number of at bats (AB). Store the result in baseball.
+
+# This 'BA' column represents the batting average for each player.
+# It's calculated by dividing the number of hits (H) by the number of at bats (AB).
+baseball <- baseball %>%
+  mutate(BA = H / AB)
+
+```
+
+```{r}
+# 7. Modify your new BA column so that the value is rounded to three (3) decimal places.
+
+# Modifies the 'BA' column in the 'baseball' data frame and rounds the batting average to 3dp.
+baseball <- baseball %>%
+  mutate(BA = round(BA, 3))
+
+# Displays the data set
+baseball
+
+```
+
+```{r}
+# 8. On-base percentage (OBP) is arguably a better statistic than batting average. Create a column called OBP that computes this stat as (H + BB) / (AB + BB). Store the result in baseball.
+
+# Computes the 'OBP' column in the 'baseball' data frame.
+# On-base percentage (OBP) is calculated as (H + BB) divided by (AB + BB).
+baseball <- baseball %>%
+  mutate(OBP = (H + BB) / (AB + BB))
+
+# Displays the data set
+baseball
+
+```
+
+```{r}
+# 9. Modify your new OBP column so that the value is rounded to three (3) decimal places.
+
+# Rounds the 'OBP' column in the 'baseball' data frame to three decimal places.
+baseball <- baseball %>%
+  mutate(OBP = round(OBP, 3))
+
+# Displays the data set
+baseball
+```
+
+```{r}
+# 10. Determine the 10 players who struck out the most this season. Store these results as strikeout_artist.
+
+# Determines the top 10 players with the most strikeouts
+strikeout_artist <- baseball %>%
+  arrange(desc(SO)) %>%
+  head(10)
+
+# Displays the details (all columns) of the 10 players with the highest number of strikeouts.
+strikeout_artist
+```
+
+```{r}
+# 11. Using a scatterplot (geom_point), plot the number of home runs (HRs) (the x-axis), versus the number of RBIs (the y-axis) per player.
+
+# Loads the plotting library
+library(ggplot2)
+
+# Creates the scatterplot
+ggplot(baseball, aes(x = HR, y = RBI)) + 
+  geom_point(aes(color = HR), alpha = 0.6) +  # Uses color to represent HR values and sets opacity for points
+  labs(title = "Home Runs vs. RBIs per Player",  # Sets the title
+       x = "Home Runs (HR)",                     # Label for the x-axis
+       y = "Runs Batted In (RBI)") +             # Label for the y-axis
+  theme_minimal() +                              # Uses a minimal theme for a clean look
+  guides(color = guide_legend(title = "HRs"))    # Sets a legend for HRs
+
+
+
+```
+
+```{r}
+# 12. To be eligible for end-of-season awards, a player must have either at least 300 at bats or appear in at least 100 games. Keep only the players who are eligible to be considered and store them in a variable called eligible_df.
+
+# Filters the baseball data to keep only players who meet the eligibility criteria
+eligible_df <- baseball %>% 
+  filter(AB >= 300 | G >= 100)  # Keeps players with at least 300 at bats or who appeared in at least 100 games
+
+# Displays players who meet the given criteria.
+eligible_df
+
+
+```
+
+```{r}
+# 13. For eligible players, create a histogram of batting average. Use a binwidth of .025 in your graph. The graph should be drawn in blue and filled in green.
+
+# Creates a histogram of batting average for eligible players
+#ggplot(eligible_df, aes(x = BA)) + 
+  #geom_histogram(binwidth = 0.025, color = "blue", fill = "green") +
+  #labs(title = "Histogram of Batting Average for Eligible Players",
+       #x = "Batting Average",
+       #y = "Number of Players") +
+  #theme_minimal()
+
+df1 = filter(data_2015, data_2015$region == 'Western Europe') %>% arrange(happiness_score) %>% slice(1:10) %>% summarise(europe_gdp = mean(economy_gdp_per_capita))
+
+df2 = filter(data_2015, data_2015$region == 'Sub-Saharan Africa') %>% arrange(desc(happiness_score)) %>% slice(1:10) %>% summarise(africa_gdp = mean(economy_gdp_per_capita))
+
+gdp_df = cbind(df1, df2) gdp_df = gdp_df %>% mutate_all(round, 2) gdp_df
+
+```
+
+```{r}
+# 14. Use the following code to create a ranking column of eligible players with regard to home runs (HRs). Store the result in eligible_df.
+
+# Adds a new column 'RankHR' to the eligible_df data frame.
+# The rank is determined by the number of home runs (HR) in descending order.
+# In case of ties in the number of HRs, the minimum rank is assigned to all tied players.
+eligible_df <- eligible_df |>
+mutate(RankHR =rank(-1 * HR, ties.method = "min"))
+
+# Display the updated eligible_df data frame.
+eligible_df
+
+```
+
+```{r}
+# 15. Repeat the prior step to create rankings for both runs batted in (RBI) and on-base percentage (OBP). Store the result in eligible_df.
+eligible_df <- eligible_df |>
+  mutate(
+    RankHR = rank(-1 * HR, ties.method = "min"), # Creates a ranking based on home runs (HR) in descending order.
+    RankRBI = rank(-1 * RBI, ties.method = "min"), # Creates a ranking based on runs batted in (RBI) in descending order.
+    RankOBP = rank(-1 * OBP, ties.method = "min") # Creates a ranking based on on-base percentage (OBP) in descending order.
+  )
+
+# Displays all rankings are stored back in the eligible_df data frame
+eligible_df
+```
+
+```{r}
+# 16. Create a TotalRank column that is the sum of the prior three (3) ranks. If a player was ranked first in HR, RBI, and OBP, then their total rank would be 3. Store the result in eligible_df.
+
+# Adds up the individual ranks for HR, RBI, and OBP to get a TotalRank for each player.
+eligible_df <- eligible_df |>
+  mutate(
+    TotalRank = RankHR + RankRBI + RankOBP
+  )
+
+# Displays the eligible_df dataframe
+eligible_df
+
+```
+
+
+
+```{r}
+# 17. Arrange the data in ascending order by TotalRank and store the twenty (20) lowest TotalRank scores in a variable called mvp_candidates.
+
+# sorting the eligible_df dataframe by TotalRank in ascending order
+mvp_candidates <- eligible_df |>
+  arrange(TotalRank) %>%
+  head(20) # Displays the first 20 rows
+
+mvp_candidates
+```
+
+```{r}
+# 18. Create a variable called mvp_candidates_abbreviated with the First, Last, RankHR, RankRBI, RankOBP, and TotalRank selected from mvp_candidates.
+
+# Selects the columns First, Last, RankHR, RankRBI, RankOBP, and TotalRank.
+mvp_candidates_abbreviated <- mvp_candidates %>%
+  select(First, Last, RankHR, RankRBI, RankOBP, TotalRank)
+
+# Displays the result
+mvp_candidates_abbreviated
+```
+
+```{r}
+# 19. In a separate report, make a recommendation for the league most valuable player (MVP). Keep in mind that the dataset completely ignores pitchers. You can decide whether a pitcher should be eligible for the MVP. Base your decision on the data you have analyzed. You may choose to do additional analysis at your discretion. You should produce a concise, written executive summary that, in addition to the title page and citations, contains an introduction, presentation of written key findings supported by visualizations, and a conclusion that contains your recommendations as supported by the data. Your executive summary should adhere to basic APA guidelines.
+```
+
+
+```{r}
+# Run this cell to check your answers 
+library(pacman)
+p_load(testthat) 
+p_load(tidyverse)
+test_file("project2_tests.R")
+
+```
+
+
+

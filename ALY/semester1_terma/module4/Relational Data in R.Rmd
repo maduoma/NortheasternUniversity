@@ -1,0 +1,98 @@
+---
+title: "Relational Data in R"
+output: html_notebook
+---
+
+```{r}
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+```
+
+```{r}
+# Import libraries
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+
+```
+
+```{r}
+# Review: Joins
+
+# create some dataframes
+a <- data_frame(x = c('a','b','c','d'), y = c(2,2,3,4), z = c(111,111,222,222))
+b <- data_frame(x = c('a','b','c','c'), y = c(1,2,3,4), z = c(55,111,66,66), w=c(10,11,12,13))
+a
+b
+
+
+left_join(a, b, by = 'x')
+
+right_join(a, b, by = 'x')
+
+inner_join(a, b, by = 'x')
+
+full_join(a, b, by = 'x')
+
+
+```
+
+```{r}
+# Other ways to join tables: filter joins 
+
+a 
+b
+
+semi_join(a, b)
+
+anti_join(a, b)
+
+
+```
+
+```{r}
+# install.packages('nycflights13')
+
+library(nycflights13)
+
+# see tables 
+flights 
+
+planes 
+
+airports 
+
+weather 
+
+airlines
+
+# You need variables from more than 1 table. Join the tables and then other data processing tasks. 
+
+# Use the schema of the tables https://cran.r-project.org/web/packages/dittodb/vignettes/nycflights.html. Join the flights and planes table. How many flights used engine type 'Fixed wing multi engine'? 
+
+# flights are in flights table; engine type is in planes table. The 2 tables are joined by column (var) 'tailnum'.
+
+
+inner_join(flights, planes, by = 'tailnum') %>% filter(type=='Fixed wing multi engine')
+
+
+```
+```{r}
+
+```
+```{r}
+library(nycflights13)
+library(dplyr)
+
+# Joining the airlines and flights tables by carrier
+result <- left_join(flights, airlines, by = "carrier")
+
+# Filtering for JetBlue Airways and counting the flights
+jetblue_flights_count <- result %>%
+  filter(name == "JetBlue Airways") %>%
+  nrow()
+
+print(paste("Number of JetBlue Airways flights:", jetblue_flights_count))
+```
+
+

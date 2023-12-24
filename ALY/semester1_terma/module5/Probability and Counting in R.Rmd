@@ -1,0 +1,209 @@
+---
+title: "Probability and Counting in R.Rmd"
+output: html_document
+---
+
+```{r}
+# use the ball dataset
+
+df = read.csv('ball-dataset.csv')
+df
+
+```
+
+```{r}
+# get frequency tables 
+
+freq_color = df %>% group_by(color) %>% summarize(counts = n())
+freq_label = df %>% group_by(label) %>% summarize(counts = n())
+
+freq_color
+freq_label
+
+```
+
+
+```{r}
+# examples of probability calculations using R
+
+# get the probability of drawing a red ball
+
+nrow(df %>% filter(color == 'red'))/nrow(df) 
+
+# get the probability of drawing a red ball with a B?
+
+nrow(df %>% filter(color == 'red' & label == 'B'))/nrow(df) 
+
+# get the probability of drawing a red ball or with a B?
+
+nrow(df %>% filter(color == 'red' | label == 'B'))/nrow(df) 
+
+# get the probability of drawing a red ball followed by a yellow ball without replacement
+
+nrow(df %>% filter(color == 'red'))/nrow(df) * nrow(df %>% filter(color == 'yellow'))/(nrow(df)-1)
+
+
+```
+
+```{r}
+# get the probability of drawing a blue ball followed by a ball with a C without replacement
+
+# 2 cases: 
+
+# case 1: blue ball and it's a C 
+blue_C = nrow(df %>% filter(color == 'blue' & label == 'C'))/nrow(df) * (nrow(df %>% filter(label == 'C'))-1)/(nrow(df)-1)
+
+# case 2: blue ball and it's not a C 
+blue_not_C = nrow(df %>% filter(color == 'blue' & label != 'C'))/nrow(df) * (nrow(df %>% filter(label == 'C')))/(nrow(df)-1)
+
+blue_C + blue_not_C
+  
+# how many ways can you draw the 3 letters A, B, C in that order without replacement? You may treat each ball as 'different' (even though they have the same label). 
+
+nrow(df %>% filter(label == 'A')) * nrow(df %>% filter(label == 'B')) * nrow(df %>% filter(label == 'C'))
+
+# how many ways can you draw the 3 letters A, B, C in any order? 
+
+# there are 6 ways to get A, B, C: ABC, ACB, BAC, BCA, CAB, CBA 
+
+nrow(df %>% filter(label == 'A')) * nrow(df %>% filter(label == 'B')) * nrow(df %>% filter(label == 'C')) * 6
+
+factorial(3)
+
+# how many ways can you draw the 4 letters A, B, C, D in any order? 
+
+# there are 4!=24 ways to get A, B, C, D: ABCD, ABDC, ACBD, ACDB, ADBC, ADCB... 
+
+factorial(4)
+
+```
+
+
+```{r}
+# create a dataframe that contains all possible outcomes of flipping the fair coin 3 times.
+
+coin_tosses = crossing(
+  first  = c('H', 'T'),
+  second = c('H', 'T'),
+  third  = c('H', 'T')
+)
+
+coin_tosses
+
+# what is the probability of an outcome of 2 heads?
+
+coin_tosses$count_H = rowSums(coin_tosses == 'H')
+
+nrow(coin_tosses %>% filter(count_H == 2))/nrow(coin_tosses)
+
+# what is the probability of an outcome of all tails?
+
+coin_tosses$count_T = rowSums(coin_tosses == 'T')
+
+nrow(coin_tosses %>% filter(count_T == 3))/nrow(coin_tosses)
+
+# what is the probability of an outcome of 1 head or 1 tail?
+
+nrow(coin_tosses %>% filter(count_H == 1 | count_T == 1))/nrow(coin_tosses)
+
+```
+
+
+```{r}
+# Suppose the above coin is now unfair, with 0.7 chance of getting a head.
+# Compute the probability of each row outcome and store it as a column in the dataframe.
+
+coin_tosses$prob = 0.7^coin_tosses$count_H * (1-0.7)^coin_tosses$count_T
+
+coin_tosses
+
+# what is the probability of an outcome of 2 heads?
+
+sum(coin_tosses %>% filter(count_H == 2) %>% select(prob))
+
+# what is the probability of an outcome of all tails?
+
+sum(coin_tosses %>% filter(count_T == 3) %>% select(prob))
+
+# what is the probability of an outcome of 1 head or 1 tail? 
+
+sum(coin_tosses %>% filter(count_H == 1 | count_T == 1) %>% select(prob))
+
+```
+
+
+```{r}
+# Suppose a soccer team has a 60% chance of winning a game at home and a 50% chance of winning away games. Consider that the team is about to play 4 games: 2 at home and 2 away.
+
+# What is the probability that they will win exactly 4 games?
+
+soccer_outcomes = crossing(
+  home1 = c('W', 'L'),
+  home2 = c('W', 'L'),
+  away1 = c('W', 'L'),
+  away2 = c('W', 'L')
+)
+
+
+soccer_outcomes$count_home_W = rowSums(soccer_outcomes[1:2] == 'W')
+soccer_outcomes$count_home_L = rowSums(soccer_outcomes[1:2] == 'L')
+
+soccer_outcomes$count_away_W = rowSums(soccer_outcomes[3:4] == 'W')
+soccer_outcomes$count_away_L = rowSums(soccer_outcomes[3:4] == 'L')
+
+soccer_outcomes$joint_prob = 0.6^soccer_outcomes$count_home_W * (1-0.6)^soccer_outcomes$count_home_L * 0.5^soccer_outcomes$count_away_W * (1-0.5)^soccer_outcomes$count_away_L
+
+soccer_outcomes
+
+soccer_outcomes %>% filter(count_home_W + count_away_W == 4) %>% select(joint_prob) %>% sum()
+
+
+```
+
+```{r}
+# What is the probability that they will win more than one game?
+
+soccer_outcomes %>% filter(count_home_W + count_away_W > 1) %>% select(joint_prob) %>% sum()
+
+```
+
+```{r}
+# How many different ways could you pick 3 games at random and have 1 home game and 2 away games?
+
+# home games 
+home_games = crossing(
+  game1 = c('home1', 'home2'),
+)
+
+home_games$count_home1 = rowSums(home_games == 'home1')
+home_games$count_home2 = rowSums(home_games == 'home2')
+
+home_games = home_games %>% filter(count_home1<=1 & count_home2<=1)
+
+home_games = home_games %>% distinct(count_home1, count_home2)
+
+home_games
+
+# away games
+away_games = crossing(
+  game1 = c('away1', 'away2'),
+  game2 = c('away1', 'away2')
+)
+
+away_games$count_away1 = rowSums(away_games == 'away1')
+away_games$count_away2 = rowSums(away_games == 'away2')
+
+away_games = away_games %>% filter(count_away1<=1 & count_away2<=1)
+
+away_games = away_games %>% distinct(count_away1, count_away2)
+
+away_games
+
+nrow(home_games)*nrow(away_games)
+
+# home1, away1, away2
+# home2, away1, away2
+
+```
+
+

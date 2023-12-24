@@ -1,0 +1,212 @@
+---
+title: "data_cleaning_in_r"
+author: "Madu"
+date: "2023-12-02"
+output: html_document
+---
+```{r}
+df <- data.frame(col1 = c("1", "2", "three", "4"), col2 = c(5, 6, 7, 8))
+# 1. Identify Non-Numeric Columns
+# Assuming your data frame is named df
+non_numeric_cols <- sapply(df, function(x) !is.numeric(x))
+print(names(df)[non_numeric_cols])
+
+```
+```{r}
+# 2. Convert Columns to Numeric
+df[, non_numeric_cols] <- lapply(df[, non_numeric_cols], function(x) as.numeric(as.character(x)))
+df[, non_numeric_cols]
+```
+```{r}
+# 3. Handling NA Values
+
+# Remove rows with NAs: If it's acceptable to lose data.
+df <- na.omit(df)
+df
+
+# Fill NAs with a value: Such as 0, mean, median, etc.
+df[is.na(df)] <- 0  # Or use a suitable value or statistical measure
+df[is.na(df)]
+```
+```{r}
+# 4. Removing Non-Numeric Columns
+
+df <- df[, sapply(df, is.numeric)]
+df
+```
+```{r}
+# Complete Example
+# Combining all these steps:
+# Example data frame
+df <- data.frame(col1 = c("1", "2", "three", "4"), col2 = c(5, 6, 7, 8))
+
+# Identify non-numeric columns
+non_numeric_cols <- sapply(df, function(x) !is.numeric(x))
+
+# Convert to numeric
+df[, non_numeric_cols] <- lapply(df[, non_numeric_cols], function(x) as.numeric(as.character(x)))
+
+# Handling NA values
+df[is.na(df)] <- 0  # Or use another method like na.omit(df)
+
+# Remove non-numeric columns
+df <- df[, sapply(df, is.numeric)]
+
+# Now you can calculate mean without error
+colMeans(df, na.rm = TRUE)
+
+```
+
+```{r}
+# Approach: Check Each Value Before Conversion: NA Warnings
+
+# Example data frame
+df <- data.frame(col1 = c("1", "2", "three", "4"), col2 = c(5, 6, 7, 8), stringsAsFactors = FALSE)
+
+# Function to check and convert each element
+convert_to_numeric <- function(x) {
+  if (grepl("^[+-]?[0-9]*\\.?[0-9]+$", x)) {
+    return(as.numeric(x))
+  } else {
+    return(0) # Replace non-numeric with 0
+  }
+}
+
+# Apply the function to each element of the dataframe
+df <- data.frame(lapply(df, function(col) {
+  sapply(col, function(x) convert_to_numeric(as.character(x)))
+}))
+
+# Calculate mean without NA warning
+colMeans(df, na.rm = TRUE)
+
+```
+```{r}
+# install.packages("dplyr")
+# install.packages("magrittr")  # Usually, installing dplyr is sufficient as magrittr comes with it
+# install.packages("tidyr")
+# install.packages("purrr")
+library(dplyr)
+# library(magrittr)
+# library(tidyr)
+# library(purrr)
+
+# NA Warnings
+
+# Example data frame
+df <- data.frame(col1 = c("1", "2", "three", "4"), col2 = c(5, 6, 7, 8), stringsAsFactors = FALSE)
+
+# Function to check if a value is numeric and convert accordingly
+convert_to_numeric <- function(x) {
+  num <- suppressWarnings(as.numeric(x))
+  ifelse(is.na(num), 0, num)
+}
+
+# Apply the function to each element of the dataframe
+df <- df %>% 
+  mutate(across(everything(), ~sapply(.x, convert_to_numeric)))
+
+# Calculate mean without NA warning
+colMeans(df, na.rm = TRUE)
+```
+```{r}
+# SOME DATA CLEANING STARTS
+```
+
+```{r}
+# Step 1: Import Libraries and Load Data
+# Load the data
+url <- "https://raw.githubusercontent.com/uiuc-cse/data-fa14/gh-pages/data/iris.csv"
+df <- read.csv(url)
+
+# Display the first few rows of the dataframe
+head(df)
+
+```
+```{r}
+##Step 2: Inspect the Data
+# Basic information about the dataset
+str(df)
+
+# Summary statistics
+summary(df)
+
+# Check for missing values
+colSums(is.na(df))
+
+```
+```{r}
+## Step 3: Handle Missing Data
+# Check for missing values and replace them in the Sepal.Length column
+if (any(is.na(df$Sepal.Length))) {
+  df$Sepal.Length <- ifelse(is.na(df$Sepal.Length), mean(df$Sepal.Length, na.rm = TRUE), df$Sepal.Length)
+}
+
+# View the column
+df$Sepal.Length
+
+```
+
+```{r}
+# Display the names of the columns in df
+print(names(df))
+
+```
+
+```{r}
+##Step 4: Convert Data Types
+# Convert data types if needed
+df$sepal_length <- as.numeric(df$sepal_length)
+df$sepal_length
+```
+```{r}
+# Step 5: Handle Duplicates
+# Removing duplicate rows if any
+df <- df[!duplicated(df), ]
+
+# Check the dimensions of the dataframe after dropping duplicates
+dim(df)
+
+```
+```{r}
+# Step 6: Normalize Data (Optional)
+# Example: Normalize a column
+df$sepal_length <- (df$sepal_length - min(df$sepal_length)) / (max(df$sepal_length) - min(df$sepal_length))
+df$sepal_length
+```
+```{r}
+# Step 7: Save or Continue Analysis
+# Save the cleaned dataframe to a new CSV file
+write.csv(df, 'cleaned_data.csv', row.names = FALSE)
+
+# Or continue with further analysis
+
+```
+
+```{r}
+# SOME DATA CLEANING ENDS
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

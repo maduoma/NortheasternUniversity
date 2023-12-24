@@ -1,0 +1,378 @@
+---
+title: "Achilefu-Maduabughichi-Project4.Rmd"
+# output: html_document
+output: pdf_document
+---
+
+
+```{r}
+# install.packages("pacman") 
+cat("\014") # clears console 
+rm(list = ls()) # clears global environment 
+try(dev.off(dev.list()["RStudioGD"]), silent = TRUE) # clears plots 
+try(p_unload(p_loaded(), character.only = TRUE), silent = TRUE) # clears packages 
+options(scipen = 100) # disables scientific notation for entire R session
+
+# You should do this line only once in the entire course. 
+# install.packages("pacman") 
+
+library(pacman)
+p_load(testthat) 
+p_load(tidyverse)
+p_load(lubridate)
+p_load(ggplot2)
+
+p_load(janitor)
+# p_load(dplyr)
+# p_load(tidyr)
+```
+
+# Before beginning your exploratory data analysis, develop 3–4 data questions.
+
+#'1. What is the distribution of average ratings for the books in the dataset?
+#'2. Which authors have the highest number of books?
+#'3. How does the number of pages correlate with the average rating of a book?
+#'4. What are the most common languages in which the books are written?
+
+# Part I – Exploring
+```{r}
+#1. Review any written description of your dataset. This is often referenced as the data dictionary.
+
+# Dataset Column Names:
+
+# 1. bookID: A unique identifier for each book.
+# 2. title: The title of the book.
+# 3. authors: The name(s) of the author(s) who wrote the book. Multiple authors are separated by a slash.
+# 4. average_rating: The average rating of the book.
+# 5. isbn: The International Standard Book Number, a unique identifier for books.
+# 6. isbn13: A 13-character ISBN to identify the book.
+# 7. language_code: The language in which the book is written.
+# 8. num_pages: The number of pages in the book.
+# 9. ratings_count: The number of unique users who have rated the book.
+# 10. text_reviews_count: The number of text reviews the book has received.
+# 11. publication_date: The publication date of the book.
+# 12. publisher: The publisher of the book.
+```
+```{r}
+# Reads dataset into books variable
+books <- read.csv("books.csv")
+
+# Prints the contents
+books
+```
+
+```{r}
+#2. Clean your data. Cleaning involves any task that prepares the dataset for analysis. This might include the following tasks: a. Renaming columns b. Managing NAs c. Correcting data types d. Removing columns or rows e. Manipulating strings f. Reorganizing the data g. Other steps that prepare your data
+
+# Step 1: Renames columns
+colnames(books) <- c("book_id", "average_rating", "language", "num_pages", "ratings_count", "text_reviews_count", "publication_date", "isbn_13")
+
+# Step 2: Manages NAs - Checks for missing values
+missing_values <- colSums(is.na(books))
+
+# Step 3: Corrects data types - Checking data types of each column
+data_types <- sapply(books, class)
+
+# Displays
+list(missing_values, data_types)
+
+# Step 1: Renames columns
+colnames(books) <- c('book_id', 'title', 'authors', 'average_rating', 'isbn', 'isbn_13', 'language', 'num_pages', 'ratings_count', 'text_reviews_count', 'publication_date', 'publisher')
+
+# Step 3: Corrects data types
+# Convert 'publication_date' to Date type
+books$publication_date <- as.Date(books$publication_date, format="%m/%d/%Y")
+
+# Checks for NaT (Not-a-Time) after coercion
+missing_dates <- sum(is.na(books$publication_date))
+
+# Step 4: Removes rows
+# Remove rows where 'publication_date' is NaT
+books <- books[!is.na(books$publication_date), ]
+
+# Confirms removal
+missing_dates_after_removal <- sum(is.na(books$publication_date))
+
+#----------------------------
+  # Identifies rows where 'average_rating' cannot be converted to numeric
+problematic_rating <- is.na(as.numeric(books$average_rating, warn = FALSE))
+
+# Identifies rows where 'num_pages' cannot be converted to numeric
+problematic_pages <- is.na(as.numeric(books$num_pages, warn = FALSE))
+
+# Display rows with problematic 'average_rating'
+problematic_rating_rows <- books[problematic_rating, ]
+
+# Displays rows with problematic 'num_pages'
+problematic_pages_rows <- books[problematic_pages, ]
+
+
+# Removes problematic rows
+books <- books[!problematic_rating & !problematic_pages, ]
+
+
+# Replaces with median (or some other default value)
+median_rating <- median(as.numeric(books$average_rating, warn = FALSE), na.rm = TRUE)
+books$average_rating[problematic_rating] <- median_rating
+
+median_pages <- median(as.numeric(books$num_pages, warn = FALSE), na.rm = TRUE)
+books$num_pages[problematic_pages] <- median_pages
+
+books$average_rating <- as.numeric(books$average_rating)
+books$num_pages <- as.numeric(books$num_pages)
+
+#---------------------------
+
+# Outputs results (This is just for your verification and can be removed)
+list(paste("Missing dates: ", missing_dates))
+list(paste("Missing dates after removal: ", missing_dates_after_removal))
+
+
+```
+```{r}
+#3. Determine descriptive statistics for interesting variables.
+
+# Renames columns
+colnames(books) <- c("book_id", "title", "authors", "average_rating", "isbn", "isbn_13",
+                     "language", "num_pages", "ratings_count", "text_reviews_count",
+                     "publication_date", "publisher")
+
+# Removes leading spaces from 'num_pages' column name
+names(books) <- gsub("^\\s+", "", names(books))
+
+# Converts 'publication_date' to Date type
+books$publication_date <- as.Date(books$publication_date, format="%m/%d/%Y")
+
+# Removes rows with NA in 'publication_date'
+books <- na.omit(books, "publication_date")
+
+# Calculates descriptive statistics for interesting variables
+summary_stats <- summary(books[, c("average_rating", "num_pages", "ratings_count", "text_reviews_count")])
+summary_stats
+
+```
+```{r}
+#4. Produce visualizations from the raw data that identify and highlight interesting aspects. These can include bar charts, histograms, line graphs, scatter plots, etc. Be sure the chosen graph best represents the information.
+
+# Converts 'average_rating' and 'num_pages' to numeric (assuming that you've cleaned the data)
+books$average_rating <- as.numeric(books$average_rating)
+books$num_pages <- as.numeric(books$num_pages)
+
+
+# Histogram of 'average_rating'
+# Removes rows where 'average_rating' is NA
+books <- books[!is.na(books$average_rating),]
+
+# Histogram of 'average_rating' again
+ggplot(books, aes(x = average_rating)) +
+  geom_histogram(aes(y = ..count..), bins = 30, fill = "#0073C2FF", alpha = 0.7) +
+  geom_line(aes(y = ..count..), stat="bin", bins = 30, color = "#FC4E07") +
+  ggtitle('Distribution of Average Ratings') +
+  xlab('Average Rating') +
+  ylab('Frequency') +
+  theme_minimal() +
+  theme(text = element_text(size=16))
+
+# Histogram of 'num_pages' (Capped at 1000)
+ggplot(subset(books, num_pages <= 1000), aes(x = num_pages)) +
+  geom_histogram(aes(y = ..count..), bins = 30, fill = "#00AFBB", alpha = 0.7) +
+  geom_line(aes(y = ..count..), stat="bin", bins = 30, color = "#C77CFF") +
+  ggtitle('Distribution of Number of Pages (Capped at 1000)') +
+  xlab('Number of Pages') +
+  ylab('Frequency') +
+  theme_minimal() +
+  theme(text = element_text(size=16))
+
+# Scatter plot between 'average_rating' and 'num_pages' (Capped at 1000)
+ggplot(subset(books, num_pages <= 1000), aes(x = average_rating, y = num_pages)) +
+  geom_point(alpha = 0.5, color = "#D55E00") +
+  ggtitle('Scatter Plot of Average Rating vs. Number of Pages (Capped at 1000)') +
+  xlab('Average Rating') +
+  ylab('Number of Pages') +
+  theme_minimal() +
+  theme(text = element_text(size=16))
+
+# Histogram of 'ratings_count' (Log scale due to wide range) with frequency curve
+ggplot(subset(books, ratings_count > 0), aes(x = ratings_count)) +
+  geom_histogram(aes(y = ..count..), bins = 30, fill = "#009E73", alpha = 0.7) +
+  geom_line(aes(y = ..count..), stat="bin", bins = 30, color = "#F0E442") +  # <-- Frequency curve added here
+  ggtitle('Distribution of Ratings Count (Log Scale)') +
+  xlab('Ratings Count') +
+  ylab('Frequency') +
+  scale_x_log10() +
+  theme_minimal() +
+  theme(text = element_text(size=16))
+
+
+```
+
+#Part II – Expanding
+
+```{r}
+# 1. Create new variables that better capture the data you want to report. For example, if the data shows yearly sales by month, you might calculate the month-to-month increase or decrease in sales as a new column.
+
+# Creates 'popularity_score'
+books$popularity_score <- books$average_rating * log(books$ratings_count + 1)
+
+# Creates 'reviews_per_rating'
+books$reviews_per_rating <- books$text_reviews_count / books$ratings_count
+
+# Replaces NaN with 0 in 'reviews_per_rating'
+books$reviews_per_rating[is.na(books$reviews_per_rating)] <- 0
+
+# Shows the first few rows to see the new variables
+head(books[, c("title", "average_rating", "ratings_count", "popularity_score", "reviews_per_rating")])
+
+```
+
+```{r}
+# 2. Group, summarize, rank, arrange, count, or perform any other useful operations to create new data frames that provide access to different views of the data.
+
+# Cleans steps (renaming columns, converting data types, etc.):
+colnames(books)[colnames(books) == "  num_pages"] <- "num_pages"
+books$publication_date <- as.Date(books$publication_date, format="%m/%d/%Y")
+
+# Creates new variables
+books$popularity_score <- books$average_rating * log(books$ratings_count + 1)
+books$reviews_per_rating <- books$text_reviews_count / books$ratings_count
+books$reviews_per_rating[is.na(books$reviews_per_rating)] <- 0
+#Group by 'language' and summarize the average 'popularity_score' and 'average_rating'
+books_language_summary <- books %>%
+  group_by(language) %>%
+  summarise(
+    avg_popularity_score = mean(popularity_score, na.rm = TRUE),
+    avg_average_rating = mean(average_rating, na.rm = TRUE)
+  )
+
+#Top 10 most popular authors based on the average 'popularity_score':
+books_top_authors <- books %>%
+  group_by(authors) %>%
+  summarise(
+    avg_popularity_score = mean(popularity_score, na.rm = TRUE)
+  ) %>%
+  arrange(desc(avg_popularity_score)) %>%
+  head(10)
+
+#Counts of books by each publisher
+books_publisher_count <- books %>%
+  count(publisher, sort = TRUE)
+
+# Summaries statistics for books with more than 1000 pages
+books_large_books <- books %>%
+  filter(num_pages > 1000) %>%
+  summarise(
+    avg_average_rating = mean(average_rating, na.rm = TRUE),
+    avg_ratings_count = mean(ratings_count, na.rm = TRUE),
+    avg_popularity_score = mean(popularity_score, na.rm = TRUE)
+  )
+books_language_summary
+books_top_authors
+books_publisher_count
+books_large_books
+
+
+```
+```{r}
+# 3. Extract the most interesting data results and produce visualizations that best communicate these results.
+
+# Corrects the column names by removing any leading and trailing spaces
+colnames(books) <- trimws(colnames(books))
+
+# Re-creates the new variables and data frames
+books$popularity_score <- books$average_rating * log(books$ratings_count + 1)
+books$reviews_per_rating <- books$text_reviews_count / books$ratings_count
+books$reviews_per_rating[is.na(books$reviews_per_rating)] <- 0
+
+books_language_summary <- books %>% group_by(language) %>% summarise(
+    popularity_score = mean(popularity_score, na.rm = TRUE),
+    average_rating = mean(average_rating, na.rm = TRUE)
+) %>% arrange(desc(average_rating))
+
+books_top_authors <- books %>% group_by(authors) %>% summarise(
+    popularity_score = mean(popularity_score, na.rm = TRUE)
+) %>% arrange(desc(popularity_score)) %>% head(10)
+
+books_publisher_count <- books %>% count(publisher) %>% arrange(desc(n))
+
+# Increases canvas size for better spacing
+options(repr.plot.width=50, repr.plot.height=60)  # Increase the height
+
+# Plot 1: Bar plot for average popularity score by language
+print(
+    ggplot(books_language_summary, aes(x=reorder(language, -average_rating), y=average_rating, fill=average_rating)) +
+        geom_bar(stat='identity', position="dodge", width = 0.5) +
+        scale_fill_gradient(low="blue", high="red") +
+        labs(title='Average Rating by Language', x='Language', y='Average Rating') +
+        coord_flip() +
+        theme_minimal() +
+        theme(
+            axis.text.y = element_text(size=12, color="darkblue"),
+            axis.title.y = element_text(size=14, color="darkred")
+        )
+)
+
+
+# Plot 2: Bar plot for Top 10 most popular authors with legend at the bottom
+print(
+    ggplot(books_top_authors, aes(x=reorder(authors, -popularity_score), y=popularity_score, fill=popularity_score)) +
+        geom_bar(stat='identity', position="dodge") +
+        scale_fill_gradient(low="green", high="yellow") +
+        labs(title='Top 10 Most Popular Authors', x='Authors', y='Average Popularity Score') +
+        coord_flip() +
+        theme_minimal() +
+        theme(
+            axis.text.y = element_text(size=12, color="darkgreen"),
+            axis.title.y = element_text(size=14, color="darkorange"),
+            legend.position = "bottom"  # Move the legend to the bottom
+        )
+)
+
+
+# Loads required library for text wrapping
+library(stringr)
+
+# Prepares the data by wrapping long publisher names
+books_publisher_count$publisher <- str_wrap(books_publisher_count$publisher, width = 10)
+
+# Plot 3: Enhanced Bar plot for Top 5 publishers by book count with horizontal bars and wrapped text
+print(
+    ggplot(head(books_publisher_count, 5), aes(y=reorder(publisher, n), x=n, fill=n)) +
+        geom_bar(stat='identity') +
+        scale_fill_gradient(low="blue", high="magenta") +  # Color gradient for bars
+        labs(title='Top 5 Publishers by Book Count', y='Publisher', x='Book Count') +
+        coord_flip() +  # Make the bars horizontal
+        theme_minimal() +  # Minimal theme for clean look
+        theme(
+            axis.text.y = element_text(size=12, color="darkblue"),  # Custom axis text color and size
+            axis.title.y = element_text(size=14, color="darkmagenta"),  # Custom axis title color and size
+            legend.position = "bottom",  # Move the legend to the bottom
+            plot.title = element_text(hjust = 0.5)  # Center align the title
+        )
+)
+
+
+
+# Plot 4: Histogram for popularity score of books with more than 1000 pages with legend at the bottom
+print(
+    ggplot(books[books$num_pages > 1000, ], aes(x=popularity_score)) +
+        geom_histogram(aes(y=..count.., fill="Histogram"), bins=20, alpha=0.7) +
+        geom_density(aes(y=..count.., color="Density"), linetype=1) +
+        labs(title='Popularity Score Distribution for Books with > 1000 Pages', x='Popularity Score', y='Frequency') +
+        scale_fill_manual(values="purple", name="Plot Elements") +
+        scale_color_manual(values="blue", name="Plot Elements") +
+        theme_minimal() +
+        theme(legend.position = "bottom")  # Move the legend to the bottom
+)
+
+
+```
+
+# Part III – Communicating
+
+```{r}
+#1. Report what you have learned about your data. Identify 3–5 observations or follow- up questions that you could explore in the future.
+
+# This is in the report. Please kindly check in the report.
+```
+
+

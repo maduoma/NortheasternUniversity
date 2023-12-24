@@ -1,0 +1,66 @@
+---
+title: "Correlation and Linear Regression"
+output: html_notebook
+---
+
+```{r}
+# install package if needed 
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+# install.packages('dplyr')
+# install.packages('Metrics')
+```
+
+```{r}
+# Load R packages
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(Metrics)
+
+```
+
+```{r}
+# Import the mpg.csv data on Canvas
+df = read.csv('mpg.csv')
+df
+
+```
+
+```{r}
+cor(df$horsepower, df$acceleration) 
+
+cor.test(df$horsepower, df$acceleration) 
+
+
+```
+
+
+```{r}
+# Estimate linear regression
+
+linear_model = lm(mpg ~ . - car_name, data = df)
+
+summary(linear_model)
+
+mae(df$mpg, predict(linear_model))
+mse(df$mpg, predict(linear_model))
+rmse(df$mpg, predict(linear_model))
+
+```
+
+
+```{r}
+
+linear_model2 = lm(mpg ~ . - car_name - cylinders + factor(cylinders), data = df)
+
+summary(linear_model2)
+
+mae(df$mpg, predict(linear_model2))
+mse(df$mpg, predict(linear_model2))
+rmse(df$mpg, predict(linear_model2))
+
+```
+
+
+

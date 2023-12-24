@@ -1,0 +1,296 @@
+---
+title: "ggplot"
+output: html_notebook
+# output: pdf_document
+---
+
+```{r}
+# install package if needed 
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+```
+
+```{r}
+# Load R packages
+library(ggplot2)
+library(tidyverse)
+
+# ggplot2 documentation https://ggplot2.tidyverse.org/reference/
+
+```
+
+```{r}
+# Load built-in dataset mpg into the environment (https://ggplot2.tidyverse.org/reference/mpg.html)
+data(mpg)
+
+```
+
+```{r}
+# Look at the data
+head(mpg)
+
+mpg
+
+```
+
+```{r}
+# ggplot2 structure
+
+options(repr.plot.width=6, repr.plot.height=3)
+
+# Structured ggplot syntax
+ggplot(mpg, aes(hwy, cty)) +
+ geom_point(aes(color = cyl)) +
+ geom_smooth(method ="lm", se = FALSE) +
+ scale_color_gradient() + 
+ theme_bw() 
+
+```
+
+```{r}
+# Aesthetics
+
+# set color 
+ggplot(data = mpg) +
+geom_point(mapping = aes(x = displ, y = hwy, color = class)) 
+
+
+ggplot(data = mpg) +
+geom_point(mapping = aes(x = displ, y = hwy, size = class))
+
+ggplot(data = mpg) + 
+geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
+
+ggplot(data = mpg) +
+geom_point(mapping = aes(x = displ, y = hwy), shape = 17, color = 'blue')
+
+```
+
+```{r}
+# Labels
+
+ggplot(mpg, aes(cty, hwy)) + 
+geom_point() + 
+ggtitle('Title') + 
+xlab('x label') + 
+ylab('this is a y label') + 
+theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+```{r}
+# Legends
+
+ggplot(data = mpg) +
+geom_point(mapping = aes(x = displ, y = hwy, shape = class)) + 
+theme(legend.position = 'top') 
+
+ggplot(data = mpg) +
+geom_point(mapping = aes(x = displ, y = hwy, shape = class)) + 
+theme(legend.position = 'top') + scale_shape_manual(values = seq(0,6))
+
+ggplot(data = mpg) +
+geom_point(mapping = aes(x = displ, y = hwy, shape = class)) + 
+theme(legend.position = 'top') + scale_shape_manual(values = c(1, 5, 10, 6, 22, 17, 4))
+
+# See ggplot's documentation for a list of symbols and assigned numbers:
+# https://ggplot2.tidyverse.org/articles/ggplot2-specs.html
+
+```
+
+
+
+```{r}
+# Histogram
+
+ggplot(mpg, aes(hwy)) + geom_histogram(binwidth = 3)
+
+ggplot(mpg, aes(hwy)) + geom_histogram(binwidth = 3, color = 'red', fill = 'blue')
+
+ggplot(mpg, aes(x=hwy, y=stat(count)/sum(stat(count)))) + geom_histogram(binwidth=3) + ylab('Percentage')
+
+```
+
+```{r}
+# Density Plot
+ggplot(mpg, aes(hwy)) + 
+geom_density(kernel = 'gaussian') 
+
+```
+
+
+```{r}
+# Bar Chart
+
+ggplot(mpg, aes(class)) + geom_bar()
+
+ggplot(mpg) + geom_bar(mapping = aes(x = class, fill = class))
+
+ggplot(mpg) + geom_bar(mapping = aes(x = class, fill = drv))
+
+ggplot(mpg) + geom_bar(mapping = aes(x = class, fill = drv)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+
+ggplot(mpg, aes(class, hwy)) + geom_bar(stat = 'identity')
+
+```
+
+```{r}
+# stat_summary: Used to aggregate values by categorical variables 
+# documentation: https://ggplot2.tidyverse.org/reference/stat_summary.html
+
+
+ggplot(mpg, aes(class, hwy)) + stat_summary(fun="mean", geom="bar")
+
+```
+
+```{r}
+# Scatterplot
+ggplot(mpg, aes(cty, hwy)) + geom_point()
+
+ggplot(mpg, aes(cty, hwy)) + geom_point() + xlim(20, 30) + ylim(25, 35)
+
+```
+
+
+```{r}
+# Boxplot
+
+ggplot(mpg, aes(class, hwy)) + geom_boxplot()
+
+ggplot(mpg, aes(hwy, class)) + geom_boxplot()
+
+```
+
+
+```{r}
+# Line Plot (use time-series data 'economics')
+
+
+ggplot(economics, aes(date, unemploy)) + geom_line()
+
+ggplot(economics) + geom_line(aes(date, unemploy))
+
+
+```
+
+
+```{r}
+# Line Plot for categorical data
+
+mpg2 = summarise(group_by(mpg, class), mean_hwy = mean(hwy, na.rm=TRUE))
+
+ggplot(mpg2) + geom_line(aes(class, mean_hwy), group = 1)
+
+ggplot(mpg2, aes(class, mean_hwy, color = mean_hwy)) + geom_point() + geom_line(group = 1)
+
+ggplot(mpg2) + geom_point(aes(class, mean_hwy, size = mean_hwy)) + geom_line(aes(class, mean_hwy, color = mean_hwy), group = 1)
+
+```
+```{r}
+# Load dplyr package and the built-in mpg dataset
+library(dplyr)
+
+# Create a new variable cty_hwy that sums up cty and hwy
+mpg_with_cty_hwy <- mpg %>%
+  mutate(cty_hwy = cty + hwy)
+
+# Group by year and calculate the average cty_hwy
+result <- mpg_with_cty_hwy %>%
+  group_by(year) %>%
+  summarise(avg_cty_hwy = mean(cty_hwy))
+
+# Find the average cty_hwy for the year 1999 and round it to 2 decimal places
+avg_cty_hwy_1999 <- round(filter(result, year == 1999)$avg_cty_hwy, 2)
+
+# Print the average cty_hwy for 1999
+print(paste("The average cty_hwy for the year 1999 is:", avg_cty_hwy_1999))
+
+```
+```{r}
+# Load the required packages
+library(ggplot2)
+library(dplyr)
+
+# Create a boxplot for hwy for each manufacturer
+ggplot(mpg, aes(x = manufacturer, y = hwy)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Boxplot of hwy mileage by Manufacturer",
+       x = "Manufacturer",
+       y = "Highway Mileage")
+
+# To find the manufacturer with the highest outlier
+highest_outlier_manufacturer <- mpg %>%
+  group_by(manufacturer) %>%
+  summarise(highest_hwy = max(hwy)) %>%
+  arrange(desc(highest_hwy)) %>%
+  slice_head(n = 1) %>%
+  pull(manufacturer)
+
+# Print the manufacturer with the highest outlier in hwy
+print(paste("The manufacturer with the outlier of the highest value is:", highest_outlier_manufacturer))
+
+```
+```{r}
+# Load the required packages
+library(ggplot2)
+library(dplyr)
+
+# Create a boxplot for hwy for each manufacturer
+ggplot(mpg, aes(x = manufacturer, y = hwy)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Boxplot of hwy mileage by Manufacturer",
+       x = "Manufacturer",
+       y = "Highway Mileage")
+
+# Identify the manufacturer with the highest outlier
+highest_outlier_data <- mpg %>% 
+  arrange(desc(hwy)) %>% 
+  head(1)
+
+highest_outlier_manufacturer <- highest_outlier_data$manufacturer
+
+# Print the manufacturer with the highest outlier in hwy
+print(paste("The manufacturer with the outlier of the highest value is:", highest_outlier_manufacturer))
+
+```
+
+```{r}
+# Load the required package
+library(ggplot2)
+
+# Create a density plot for displ
+ggplot(mpg, aes(x = displ)) +
+  geom_density() +
+  labs(title = "Density Plot of displ",
+       x = "Displacement",
+       y = "Density")
+
+```
+```{r}
+# Load necessary libraries
+library(ggplot2)
+
+# Load the data
+data(mpg)
+
+# Filter data for Dodge
+dodge_data <- subset(mpg, manufacturer == "Dodge")
+
+# Count the frequency of each transmission type for Dodge
+trans_count <- table(dodge_data$trans)
+
+# Display the count
+print(trans_count)
+
+# Create a bar chart segmented by transmission type
+ggplot(mpg, aes(x = manufacturer, fill = trans)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Counts of manufacturer segmented by transmission type")
+
+```
+

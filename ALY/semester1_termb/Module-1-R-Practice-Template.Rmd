@@ -1,0 +1,408 @@
+---
+title: "Module-1-R-Practice-Template.Rmd"
+output: html_document
+---
+
+```{r}
+# Install the libraries if needed
+
+# install.packages("fitdistrplus")
+# install.packages("actuar")
+# install.packages("triangle")
+
+library(fitdistrplus)
+library(actuar)
+library(stats)
+library(triangle)
+
+```
+
+
+```{r}
+# 1. A product manager for a mobile app development team is estimating the time it will take to develop a new feature for the app, specifically the "chat" feature. After gathering input from the development team, the product manager find that the development time for this feature follows a triangular distribution with a minimum estimate of 14 days, a maximum estimate of 28 days, and a most likely estimate of 21 days. 
+
+# What is the probability that the development of the "chat" feature will be completed within 20 days? Round the answer to nearest 2 decimals.
+
+# Defines the parameters for the triangular distribution
+min_estimate <- 14
+most_likely <- 21
+max_estimate <- 28
+
+# Define the function for the cumulative distribution of the triangular distribution
+triangular_cdf <- function(x, a, b, c) {
+  ifelse(x < a, 0,
+         ifelse(x < b, ((x - a)^2) / ((b - a) * (c - a)),
+                ifelse(x <= c, 1 - ((c - x)^2) / ((c - b) * (c - a)), 1)))
+}
+
+# Calculate the cumulative probability of completing within 20 days
+prob_within_20_days <- triangular_cdf(20, min_estimate, most_likely, max_estimate)
+
+# Round the probability to 2 decimal places
+prob_within_20_days_rounded <- round(prob_within_20_days, 2)
+
+# Print the result
+print(prob_within_20_days_rounded)
+
+```
+
+```{r}
+# 2. A manager at a coffee shop wants to ensure that customers don't have to wait too long in line to place their orders. To analyze the time customers spend waiting in line, the manager decides to use a uniform distribution. The manager that the time customers spend waiting in line follows a uniform distribution between 1 minute and 5 minutes. 
+
+# What is the probability that a customer will spend between 2 and 5 minutes waiting in line? Round the answer to nearest 2 decimals.
+
+# Define the parameters for the uniform distribution
+min_time <- 1  # minimum time in minutes
+max_time <- 5  # maximum time in minutes
+
+# The probability that a customer will spend between 2 and 5 minutes is the difference
+# between the probabilities of waiting less than 5 minutes and waiting less than 2 minutes.
+prob_between_2_and_5 <- punif(5, min_time, max_time) - punif(2, min_time, max_time)
+
+# Round the probability to 2 decimal places
+prob_between_2_and_5_rounded <- round(prob_between_2_and_5, 2)
+
+# Print the result
+print(prob_between_2_and_5_rounded)
+
+
+```
+
+```{r}
+# 3. A data analyst for a shipping company needs to monitor the delivery times of packages sent through your courier service. The analyst found that the delivery times of packages follow a normal distribution with a mean delivery time of 3 days and a standard deviation of 1 day. 
+
+# What is probability that a package will be delivered in exactly 3.5 days? Round the answer to nearest 2 decimals.
+
+# Parameters for the normal distribution
+mean_delivery <- 3  # mean delivery time in days
+sd_delivery <- 1    # standard deviation in days
+
+# Calculate the cumulative probability up to 3.5 days
+cum_prob_up_to_3_5 <- pnorm(3.5, mean_delivery, sd_delivery)
+
+# The probability of a package being delivered in exactly 3.5 days cannot be exactly calculated
+# as it would be the probability over an infinitesimally small interval.
+# It is effectively 0 for a continuous distribution.
+
+# For a very small interval around 3.5, you could subtract the cumulative probabilities like so:
+# cum_prob_just_below_3_5 <- pnorm(3.5 - small_interval, mean_delivery, sd_delivery)
+# prob_exact_3_5_days <- cum_prob_up_to_3_5 - cum_prob_just_below_3_5
+
+# But since we can't define 'small_interval' without additional context, we'll go with the
+# understanding that the probability of an exact value in a continuous distribution is 0.
+prob_exact_3_5_days <- 0
+
+# Print the result (though it's not necessary to round 0)
+print(prob_exact_3_5_days)
+
+
+```
+
+```{r}
+# 4. A quality control manager at a chocolate factory is responsible for ensuring that the weight of individual chocolate bars follows certain specifications. The manager knows that the weight of chocolate bars follows a normal distribution with a mean weight of 50 grams and a standard deviation of 2 grams. 
+
+# What is the probability that a randomly selected chocolate bar weighs between 40 and 48 grams? Round the answer to nearest 2 decimals.
+# Parameters for the normal distribution
+mean_weight <- 50  # mean weight in grams
+std_dev <- 2       # standard deviation in grams
+
+# Calculate the cumulative probability up to 48 grams
+cum_prob_up_to_48 <- pnorm(48, mean_weight, std_dev)
+
+# Calculate the cumulative probability up to 40 grams
+cum_prob_up_to_40 <- pnorm(40, mean_weight, std_dev)
+
+# Calculate the probability of a chocolate bar weighing between 40 and 48 grams
+prob_between_40_and_48 <- cum_prob_up_to_48 - cum_prob_up_to_40
+
+# Round the answer to 2 decimals
+prob_between_40_and_48_rounded <- round(prob_between_40_and_48, 2)
+
+# Print the result
+print(prob_between_40_and_48_rounded)
+
+
+```
+
+```{r}
+# 5. A healthcare administrator responsible for managing the emergency room of a hospital. One critical aspect of the role is to analyze patient arrival times to ensure efficient resource allocation and minimize wait times. After analyzing historical data, the administrator finds that the time between patient arrivals follows an exponential distribution with an average time of 15 minutes. 
+
+# What is the probability that the time between two consecutive patient arrivals is less than 10 minutes? Round the answer to nearest 2 decimals.
+
+# Parameter for the exponential distribution
+rate <- 1 / 15  # The rate is the inverse of the average time of 15 minutes
+
+# Calculate the cumulative probability of an interarrival time less than 10 minutes
+prob_less_than_10 <- pexp(10, rate)
+
+# Round the answer to 2 decimals
+prob_less_than_10_rounded <- round(prob_less_than_10, 2)
+
+# Print the result
+print(prob_less_than_10_rounded)
+
+
+```
+
+
+```{r}
+# 6. An inventory manager for a retail store, and one of the responsibilities is to forecast the time it takes for the inventory of a particular product to be completely sold out. The manager found that the time to sell out a specific product follows a gamma distribution with a shape parameter (α) of 3 and a scale parameter (β) of 5 days. 
+
+# What is the probability that the product will be sold out within 15 days? Round the answer to nearest 2 decimals.
+
+# Parameters for the gamma distribution
+shape <- 3  # shape parameter (alpha)
+scale <- 5  # scale parameter (beta)
+
+# Calculate the cumulative probability of the product being sold out within 15 days
+prob_sold_out_within_15 <- pgamma(15, shape, scale)
+
+# Round the answer to 2 decimals
+prob_sold_out_within_15_rounded <- round(prob_sold_out_within_15, 2)
+
+# Print the result
+print(prob_sold_out_within_15_rounded)
+
+```
+
+
+```{r}
+# 7. A traffic engineer is responsible for analyzing traffic signal timings at a busy intersection. The task is to estimate the time it takes for a vehicle to pass through the intersection during peak hours. The engineer finds that the time follows a gamma distribution with a shape parameter (α) of 3 and a scale parameter (β) of 4 seconds. 
+
+# What is the probability that a vehicle will take between 7 and 10 seconds to pass through the intersection? Round the answer to nearest 2 decimals.
+# Parameters for the gamma distribution
+shape <- 3  # shape parameter (alpha)
+scale <- 4  # scale parameter (beta)
+
+# Calculate the cumulative probability up to 10 seconds
+cum_prob_up_to_10 <- pgamma(10, shape, scale)
+
+# Calculate the cumulative probability up to 7 seconds
+cum_prob_up_to_7 <- pgamma(7, shape, scale)
+
+# Calculate the probability of a vehicle taking between 7 and 10 seconds
+prob_between_7_and_10 <- cum_prob_up_to_10 - cum_prob_up_to_7
+
+# Round the answer to 2 decimals
+prob_between_7_and_10_rounded <- round(prob_between_7_and_10, 2)
+
+# Print the result
+print(prob_between_7_and_10_rounded)
+
+
+```
+
+```{r}
+# 8. A data analyst at a social media company is responsible for analyzing user engagement with a new feature on your platform. The analyst wants to understand how users' click-through rates (CTR) on this feature are distributed. After collecting data, the analyst finds that the CTR follows a beta distribution with parameters α = 10 and β = 20. 
+
+# What is the probability that a user's CTR is greater than 0.3? Round the answer to nearest 2 decimals.
+# Parameters for the beta distribution
+alpha <- 10
+beta_param <- 20
+
+# Calculate the cumulative probability up to 0.3
+cum_prob_up_to_03 <- pbeta(0.3, alpha, beta_param)
+
+# Calculate the probability of a CTR being greater than 0.3
+prob_greater_than_03 <- 1 - cum_prob_up_to_03
+
+# Round the answer to 2 decimals
+prob_greater_than_03_rounded <- round(prob_greater_than_03, 2)
+
+# Print the result
+print(prob_greater_than_03_rounded)
+
+
+```
+
+
+
+
+```{r}
+# 9. Install the fitdistrplus library for distribution fitting using the command install.packages("fitdistrplus"). 
+
+# Use the customer_data.csv. 
+
+# Fit a specific distribution for the variable Age using fitdist(df$Age, 'distr'). Replace distr in the function with norm, lnorm, gamma, and exp for normal, lognormal, gamma, and exponential distributions respectively. 
+
+# Each output includes a QQ-plot, which compares the theoretical and empirical quantiles of the variable. The closer the data points line up on the 45-degree line, the better the distribution fit.
+
+# Based on the QQ-plots, which distribution below fits the distribution of Age best? 
+
+
+library(ggplot2)
+library(readr)
+library(fitdistrplus)
+
+# Load the data
+file_path <- 'customer_data.csv' # Replace with your actual file path
+customer_data <- read_csv(file_path)
+
+# Drop NA values from 'Age' column to avoid issues during fitting
+age_data <- na.omit(customer_data$Age)
+
+# Define the distributions to fit
+distributions <- c("norm", "lnorm", "gamma", "exp")
+
+# Fit the distributions and create QQ-plots
+par(mfrow=c(2, 2))
+for (dist in distributions) {
+  fit <- fitdist(age_data, dist)
+  qqcomp(fit)
+}
+
+# You may need to adjust the method for estimating parameters for lognormal and gamma distributions
+# since the fitdist function might not do it automatically as in Python's scipy.stats.probplot.
+
+# The parameter estimation for the lognormal and gamma distributions in R
+# would be done using the fitdistr function from the MASS package, like this:
+
+library(MASS)
+
+# Estimate parameters for the lognormal distribution
+fit_logn <- fitdistr(age_data, "lognormal")
+sigma_lognorm <- fit_logn$estimate["sdlog"]
+mean_lognorm <- fit_logn$estimate["meanlog"]
+
+# Estimate parameters for the gamma distribution
+fit_gamma <- fitdistr(age_data, "gamma")
+a_gamma <- fit_gamma$estimate["shape"]
+scale_gamma <- fit_gamma$estimate["rate"]
+
+# Print the estimated parameters
+print(c(sigma_lognorm, mean_lognorm, a_gamma, scale_gamma))
+
+
+
+```
+
+
+```{r}
+# 10. Install the fitdistrplus library for distribution fitting using the command install.packages("fitdistrplus"). 
+
+# Use the customer_data.csv. 
+
+# Use the fitdistrplus library for distribution fitting for the variable Savings using fitdist(df$Savings, 'distr'). Replace distr in the function with norm, unif, gamma, and exp for normal, uniform, gamma, and exponential distributions respectively. 
+
+# Each output includes a QQ-plot, which compares the theoretical and empirical quantiles of the variable. The closer the data points line up on the 45-degree line, the better the distribution fit.
+
+# Based on the QQ plots, which distribution below fits the distribution of Savings best? 
+
+library(readr)
+library(fitdistrplus)
+library(MASS) # for fitting distributions
+
+# Load the data
+file_path <- 'customer_data.csv' # Replace with the actual file path
+customer_data <- read_csv(file_path)
+
+# Check if 'Savings' column exists and convert it to numeric if necessary
+if("Savings" %in% names(customer_data)) {
+  customer_data$Savings <- as.numeric(customer_data$Savings)
+  
+  # Remove NA values from 'Savings' column to avoid issues during fitting
+  savings_data <- na.omit(customer_data$Savings)
+  
+  # Fit the distributions
+  fit_norm <- fitdist(savings_data, "norm")
+  fit_unif <- fitdist(savings_data, "unif")
+  fit_gamma <- fitdist(savings_data, "gamma")
+  fit_exp <- fitdist(savings_data, "exp")
+  
+  # Create QQ-plots for each fitted distribution
+  par(mfrow=c(2,2))
+  
+  # Normal distribution
+  qqnorm(savings_data, main="Normal distribution")
+  qqline(savings_data, col="red", distribution = function(p) qnorm(p, mean = fit_norm$estimate[1], sd = fit_norm$estimate[2]))
+
+  # Uniform distribution
+  qqplot(qunif(ppoints(savings_data)), savings_data, main="Uniform distribution", ylab="Sample Quantiles")
+  qqline(savings_data, col="red", distribution = function(p) qunif(p, min = fit_unif$estimate[1], max = fit_unif$estimate[2]))
+
+  # Gamma distribution
+  qqplot(qgamma(ppoints(savings_data), shape = fit_gamma$estimate[1], rate = fit_gamma$estimate[2]), savings_data, main="Gamma distribution", ylab="Sample Quantiles")
+  qqline(savings_data, col="red", distribution = function(p) qgamma(p, shape = fit_gamma$estimate[1], rate = fit_gamma$estimate[2]))
+
+  # Exponential distribution
+  qqplot(qexp(ppoints(savings_data), rate = fit_exp$estimate[1]), savings_data, main="Exponential distribution", ylab="Sample Quantiles")
+  qqline(savings_data, col="red", distribution = function(p) qexp(p, rate = fit_exp$estimate[1]))
+  
+} else {
+  print("The 'Savings' column does not exist in the dataset.")
+}
+
+
+```
+
+
+```{r}
+# 11. Choose 3 more variables from customer_data.csv Download customer_data.csv. For each variable, use the fitdistrplus library to fit at least 4 distributions and state which distribution has the best fit based on the QQ-plots. 
+
+# The fitdistrplus library provides the following continuous and discrete distributions: "norm", "lnorm", "exp", "pois", "cauchy", "gamma", "logis", "nbinom", "geom", "beta", "weibull" from the stats package; "invgamma", "llogis", "invweibull", "pareto1", "pareto", "lgamma", "trgamma", "invtrgamma" from the actuar package.
+
+# Include the QQ-plot for every distribution fit and your reasoning for choosing the best one in a report of up to 4 pages. Upload the report.   
+
+library(ggplot2)
+library(fitdistrplus)
+library(scales)  # for rescaling
+library(dplyr)   # for data manipulation
+
+# Load the dataset
+customer_data <- read.csv('customer_data.csv') # Replace with your actual file path
+
+# Handling missing values (Example: Replacing with median)
+customer_data <- customer_data %>%
+  mutate(
+    Education = ifelse(is.na(Education), median(Education, na.rm = TRUE), Education),
+    FamilySize = ifelse(is.na(FamilySize), median(FamilySize, na.rm = TRUE), FamilySize),
+    Debt = ifelse(is.na(Debt), median(Debt, na.rm = TRUE), Debt)
+  )
+
+# Handling outliers (Example: Capping to 1st and 99th percentiles)
+cap_outliers <- function(x) {
+  quantiles <- quantile(x, probs = c(0.01, 0.99), na.rm = TRUE)
+  pmin(pmax(x, quantiles[1]), quantiles[2])
+}
+
+customer_data$Education <- cap_outliers(customer_data$Education)
+customer_data$FamilySize <- cap_outliers(customer_data$FamilySize)
+customer_data$Debt <- cap_outliers(customer_data$Debt)
+
+# Enhanced function to fit distributions and create QQ plots
+fit_and_plot_distribution <- function(data, distribution, variable_name) {
+  if (distribution == "beta") {
+    # Scaling data to [0, 1] for beta distribution
+    data <- scales::rescale(data, to = c(0, 1), from = range(data, na.rm = TRUE))
+  }
+
+  fit <- fitdist(data, distribution)
+
+  # Create a QQ plot using qqcomp function from fitdistrplus
+  qq_plot <- qqcomp(fit, main = paste(variable_name, "-", distribution, " Distribution"))
+
+  # Print the plot
+  print(qq_plot)
+}
+
+# Loop through variables and distributions to fit and plot
+selected_variables <- c('Education', 'FamilySize', 'Debt')
+for (variable in selected_variables) {
+  data <- customer_data[[variable]]
+  for (distribution in c('norm', 'gamma', 'logis', 'beta')) {
+    tryCatch({
+      fit_and_plot_distribution(data, distribution, variable)
+    }, error = function(e) {
+      cat("An error occurred with", variable, "-", distribution, ":", e$message, "\n")
+    })
+  }
+}
+
+
+```
+
+```{r}
+# 12. Upload a R Markdown file with all code and visualizations used to answer all questions above. You may use the template Module-1-R-Practice-Template.Rmd. 
+
+```
+

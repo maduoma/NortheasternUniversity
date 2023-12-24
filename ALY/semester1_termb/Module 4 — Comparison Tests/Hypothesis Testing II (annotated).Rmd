@@ -1,0 +1,196 @@
+---
+title: "Hypothesis Testing II"
+output: html_notebook
+---
+
+```{r}
+# install package if needed 
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+```
+
+```{r}
+# Load R packages
+library(ggplot2)
+library(tidyverse)
+
+```
+
+```{r}
+# Load built-in dataset into the environment
+# midwest: a dataset in ggplot2 with demographic information of midwest counties
+data(midwest)
+
+midwest
+
+```
+
+```{r}
+# Look at the data
+head(midwest)
+
+```
+
+```{r}
+# Look at the first 10 values in the percollege variable
+head(midwest$percollege, 10)
+
+# Get summary statistics of the percollege variable 
+summary(midwest$percollege)
+
+# Set plot size
+options(repr.plot.width=6, repr.plot.height=3)
+
+# Histogram of percollege
+ggplot(midwest, aes(percollege)) + geom_histogram()
+
+```
+
+
+```{r}
+# One sample t-test for difference in means
+
+# Use t.test function
+# Parameters:
+# mu: value to be tested against
+# paired: paired test or not
+# alternative: two.sided, less, or greater
+# conf.level: confidence level
+
+# Test the null hypothesis that mean percollege = 25 at 95% confidence level
+# alternative hypothesis: true mean is not equal to 25
+# null hypothesis has '=', we are using a 2-sided test
+t.test(midwest$percollege, mu = 25, paired = FALSE, alternative = 'two.sided', conf.level = 0.95)
+
+# Test the null hypothesis that mean percollege >= 25 at 95% confidence level
+# alternative hypothesis: true mean is less than 25
+t.test(midwest$percollege, mu = 25, paired = FALSE, alternative = 'less', conf.level = 0.95)
+
+# paired: responses from same people
+
+```
+
+```{r}
+# Two sample t-test for difference in means
+# Use t.test function
+# e.g. Test equality of variable y by variable x (group): t.test(y ~ x, data = df)
+
+# Filter data to keep only Wisconsin and ILlinois 
+df <- midwest %>% filter(state == 'WI' | state == 'IL')
+
+# Exploratory data analysis to see percollege by state  
+ggplot(df, aes(state, percollege)) + geom_boxplot()
+
+# Test the null hypothesis that mean percollege for IL and WI are equal at 95% confidence level
+# compare mean of the var percollege in 2 states IL and WI
+t.test(percollege ~ state, data = df, conf.level = 0.95)
+
+# variable to use ~ grouping variable
+
+```
+
+```{r}
+# z-test for difference in proportions
+# Use prop.test function
+# prop.test(x, n, alternative = c('two.sided, 'less, 'greater'), conf.level = 0.95)
+# Parameters:
+# x: a vector of counts of successes
+# n: a vector of counts of trials
+# alternative: two.sided, less, or greater
+# conf.level: confidence level
+
+# Suppose 40 out of 400 (10%) women are promoted, and 196 out of 3270 (6%) men are promoted 
+# Test the null hypothesis that the 2 proportions are equal 
+
+# create 2 vectors c(40,196),c(400,3270) which represent the proportions
+
+# alternative is two-sided becauase null hyp contains '='
+
+# alternative hyp: 2 proportions are not equal 
+
+prop.test(c(40,196),c(400,3270), alternative = 'two.sided', conf.level = 0.95)
+
+# if you have raw data, you need to calculate proportions first
+
+```
+
+```{r}
+# Paired t-test for difference in means
+# In paired t-test, each subject is tested twice
+# Use t.test function
+# Parameters:
+# mu: value to be tested against
+# paired: set to TRUE
+# alternative: two.sided, less, or greater
+# conf.level: confidence level
+
+# Use the sleep data, where each of the 10 subjects tried 2 types of drugs and the effect (extra) was measured 
+sleep
+
+# Test the null hypothesis that the effect (measured by variable 'extra') of the 2 drugs are equal for the 10 subjects 
+
+# alternative is two-sided becauase null hyp contains '='
+
+# alternative hyp: the effect of the 2 drugs are not equal for the 10 subjects 
+
+t.test(extra ~ group, data = sleep, paired = TRUE, alternative = 'two.sided', conf.level = 0.95)
+
+```
+
+```{r}
+# Chi-squared test 
+# Test if there is a statistically significant difference between treatment and cocaine addiction.
+
+# create the table of observed values
+
+# create the data 
+df = data.frame(success = c(14,6,4),
+                failure = c(10,18,20))
+
+# add row labels 
+rownames(df) = c('Desipramine', 'Lithium', 'Placeco')
+
+# create a 2-way freq table (cross-tabulation)
+dt = as.table(as.matrix(df))
+dt
+
+# conduct the chi-sq test 
+chisq = chisq.test(dt)
+chisq
+
+# p-value < 1%, so we reject the null hypothesis and conclude that the treatment does have an effect on treating cocaine addition
+
+chisq$expected 
+chisq$observed 
+chisq$p.value 
+
+```
+
+
+```{r}
+# Exercises: Use the midwest data
+
+data(midwest)
+
+midwest
+
+# 1. Which hypothesis test should be used to test for difference in means in popdensity for Michigan and Ohio?
+
+# Ans: Two-sample t-test (compare diff in means for a var in 2 groups)
+
+# 2. Run two-sample t-test using 90% confidence level. What is the p-value? Round the answer to nearest 3 decimals.
+
+df <- midwest %>% filter(state == 'MI' | state == 'OH')
+
+df
+
+t.test(popdensity ~ state, data = df, conf.level = 0.9)
+
+# Ans: 0.173
+
+# 3. Can the null hypothesis be rejected at the 90% confidence level?
+
+# Ans: p-value > 10%, so we cannot reject the null hypothesis. (Note: compare the p-value to 1 - conf level)
+
+```
+

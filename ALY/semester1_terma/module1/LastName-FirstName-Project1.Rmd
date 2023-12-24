@@ -1,0 +1,361 @@
+---
+title: "LastName-FirstName-Project1.Rmd"
+output: html_document
+---
+
+
+```{r}
+cat("\014") # clears console 
+rm(list = ls()) # clears global environment 
+try(dev.off(dev.list()["RStudioGD"]), silent = TRUE) # clears plots 
+try(p_unload(p_loaded(), character.only = TRUE), silent = TRUE) # clears packages 
+options(scipen = 100) # disables scientific notation for entire R session
+
+# You should do this line only once in the entire course. 
+# install.packages("pacman")
+
+library(pacman)
+
+
+```
+
+```{r}
+# 1. Write lines of code to compute all of the following. Run the code. The results should appear under the cell for question 1 in the R Markdown file.
+
+123 * 453 
+5^2 * 40 
+TRUE & FALSE 
+TRUE | FALSE 
+75 %% 10 
+75 / 10
+
+```
+
+
+```{r}
+# 2. Create a vector using the c function with the values 17, 12, -33, 5 and assign it to a variable called first_vector.
+
+
+```
+
+```{r}
+# 3. Create a vector using the c function with the values 5, 10, 15, 20, 25, 30, 35 and assign it to a variable called counting_by_fives.
+
+
+```
+
+```{r}
+# 4. Create a vector using the seq function containing every even number between 10 and 30 inclusive and assign it to a variable called second_vector.
+
+
+```
+
+```{r}
+# 5. Create a vector using the seq function containing the values 5, 10, 15, 20, 25, 30, 35 and assign it to a variable called counting_by_fives_with_seq.
+
+
+
+```
+
+```{r}
+# 6. Create a vector using the function rep and provide it with first_vector as its first argument and 10 as its second argument. Assign the result to a variable called third_vector.
+
+
+```
+
+```{r}
+# 7. Using the rep function, create a vector containing the number zero, 20 times. Store the result in a variable called rep_vector.
+
+
+```
+
+```{r}
+# 8. Create a vector using the range operator (the colon), that contains the numbers from 10 to 1 . Store the result in a variable called fourth_vector.
+
+
+
+```
+
+```{r}
+# 9. Create a vector using the range operator that contains the numbers from 5 to 15. Store the result in a variable called counting_vector.
+
+```
+
+
+```{r}
+# 10. Create a vector with the values (96, 100, 85, 92, 81, 72) and store it in a variable called grades.
+
+
+
+```
+
+
+```{r}
+# 11. Add the number 3 to the vector grades. Store the result in a variable called bonus_points_added.
+
+
+
+```
+
+```{r}
+# 12. Create a vector with the values 1 – 100. Store it in a variable called one_to_one_hundred. Do not type out all 100 numbers.
+
+```
+
+```{r}
+# 13. Create a vector with values from 100 to -100 by 3s. Store the result in a variable called reverse_numbers. To clarify, the first 3 numbers in this vector will be (100, 97, 94…)
+
+
+```
+
+
+```{r}
+# 14. Write each of the following lines of code. Add a one-sentence comment above each line explaining what is happening. Include your comments in the R Markdown file.
+
+second_vector + 20 # add 20 to each element
+second_vector * 20 # multiply by 20 to each element
+second_vector >= 20 # check if each element is >= 20
+second_vector != 20 # check if each element is not equal to 20
+
+```
+
+
+```{r}
+# 15. Using the built in sum function, compute the sum of one_to_one_hundred and store it in a variable called total.
+
+```
+
+```{r}
+# 16. Using the built in mean function, compute the average of one_to_one_hundred and store the result in a variable called average_value.
+
+
+```
+
+
+```{r}
+# 17. Using the built in median function, compute the average of one_to_one_hundred and store the result in a variable called median_value.
+
+
+
+```
+
+
+```{r}
+# 18. Using the built in max function, compute the average of one_to_one_hundred and store the result in a variable called max_value.
+
+
+
+```
+
+```{r}
+# 19. Using the built in min function, compute the average of one_to_one_hundred and store the result in a variable called min_value.
+
+
+
+```
+
+```{r}
+# 20. Using brackets, extract the first value from second_vector and store it in a variable called first_value.
+
+
+
+```
+
+```{r}
+# 21. Using brackets, extract the first, second and third values from second_vector and store it in a variable called first_three_values.
+
+
+
+```
+
+```{r}
+# 22. Using brackets, extract the 1st, 5th, 10th, and 11th elements of second_vector. Store the resulting vector in a variable called vector_from_brackets.
+
+
+
+```
+
+```{r}
+# 23. Use the brackets to extract elements from the first_vector using the following vector c(FALSE, TRUE, FALSE, TRUE). Store the result in a variable called vector_from_boolean_brackets. Explain in a comment what happens.
+
+
+
+```
+
+```{r}
+# 24. Examine the following piece of code and write a one-sentence comment explaining what is happening.
+
+second_vector >= 20
+
+```
+
+```{r}
+# 25. Examine the following piece of code and write a one-sentence comment explaining what is happening.
+
+ages_vector <- seq(from = 10, to = 30, by = 2)
+ages_vector
+
+```
+
+```{r}
+# 26. Examine the following piece of code and write a one-sentence comment explaining what is happening, assuming ages_vector was computed in the previous problem.
+
+ages_vector[ages_vector >= 20]
+
+```
+
+```{r}
+# 27. Using the same approach as the previous question, create a new vector by removing from the grades vector all values lower than 85. Store the new vector in a variable called lowest_grades_removed.
+
+
+
+```
+
+```{r}
+# 28. Use the grades vector to create a new vector with the 3rd and 4th elements of grades removed. Store this in a variable called middle_grades_removed. Try utilizing a vector of negative indexes to complete this task.
+
+
+
+```
+
+```{r}
+# 29. Use bracket notation to remove the 5th and 10th elements of second_vector. Store the result in a variable called fifth_vector.
+
+
+
+```
+
+```{r}
+# 30. Write the following code. Explain in a comment what you think the code is doing.
+
+set.seed(5)
+
+random_vector <- runif(n=10, min = 0, max = 1000)
+
+
+```
+
+
+```{r}
+# 31. Use the sum function to compute the total of random_vector. Store the result in a variable called sum_vector.
+
+
+
+```
+
+```{r}
+# 32. Use the cumsum function to compute the cumulative sum of random_vector. Store the result in a variable called cumsum_vector.
+
+
+```
+
+```{r}
+# 33. Use the mean function to compute the mean of random_vector. Store the result in a variable called mean_vector.
+
+
+
+```
+
+```{r}
+# 34. Use the sd function to compute the standard deviation of random_vector. Store the result in a variable called sd_vector.
+
+
+```
+
+```{r}
+# 35. Use the round function to round the values of random_vector. Store the result in a variable called round_vector.
+
+
+```
+
+```{r}
+# 36. Use the sort function to sort the values of random_vector. Store the result in a variable called sort_vector.
+
+
+
+```
+
+```{r}
+# 37. Consider the following code. Explain in a comment what you think the code is doing.
+
+set.seed(5)
+random_vector <- rnorm(n=1000, mean = 50, sd = 15)
+
+
+```
+
+
+```{r}
+# 38. Use the hist function and provide it with random_vector. Explain the result in a comment.
+
+
+
+```
+
+
+```{r}
+# 39. Download the datafile ds_salaries.csv from Canvas. Save it on your computer in the same folder (directory) where your R Markdown file for this project is located.
+
+
+
+```
+
+
+```{r}
+# 40. Using the p_load function, load the tidyverse set of libraries. Pacman will both install and load the tidyverse libraries.
+
+p_load(tidyverse)
+
+```
+
+
+```{r}
+# 41. The tidyverse has a function called read_csv to read files when you specify the filename. Store the result of the read into a variable called first_dataframe.
+
+```
+
+
+```{r}
+# 42. Try each of the following blocks of code. Add a one-sentence comment describing what you believe is happening.
+
+head(first_dataframe)
+
+head(first_dataframe, n = 7)
+
+names(first_dataframe)
+
+smaller_dataframe <- select(first_dataframe, job_title, salary_in_usd)
+smaller_dataframe
+
+better_smaller_dataframe <- arrange(smaller_dataframe, desc(salary_in_usd))
+better_smaller_dataframe
+
+better_smaller_dataframe <- filter(smaller_dataframe, salary_in_usd > 80000)
+better_smaller_dataframe
+
+better_smaller_dataframe <- mutate(smaller_dataframe, salary_in_euros = salary_in_usd * .94)
+better_smaller_dataframe
+
+better_smaller_dataframe <- slice(smaller_dataframe, 1, 1, 2, 3, 4, 10, 1)
+better_smaller_dataframe
+
+ggplot(better_smaller_dataframe) +
+geom_col(mapping = aes(x = job_title, y = salary_in_usd), fill = "blue") +
+xlab("Job Title") + ylab("Salary in US Dollars") + labs(title = "Comparison of Jobs ") +
+scale_y_continuous(labels = scales::dollar) +
+theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+```
+
+
+
+```{r}
+# Run this cell to check your answers 
+library(pacman)
+p_load(testthat) 
+test_file("project1_tests.R")
+
+```
+
+
+

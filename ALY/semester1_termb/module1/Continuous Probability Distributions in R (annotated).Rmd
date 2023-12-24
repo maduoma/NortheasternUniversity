@@ -1,0 +1,135 @@
+---
+title: "Continuous Probability Distributions in R.Rmd"
+output: html_document
+---
+
+```{r}
+# Install the libraries if needed
+
+# install.packages("triangle")
+
+library(triangle)
+
+```
+
+```{r}
+# You are managing a call center for a customer service hotline. The call durations follow a uniform distribution between 3 minutes and 12 minutes. What is the probability of a customer call lasts 10 minutes? 
+
+# dunif(x, min, max) gives the exact probability P(X=x), which is f(x), the prob density function
+
+# P(X=10)
+
+dunif(10, 3, 12)
+
+# in uniform distr, prob of any value = 1/(max-min) = 1/(12-3) = 1/9
+
+```
+
+```{r}
+# You are managing a call center for a customer service hotline. The call durations follow a uniform distribution between 3 minutes and 12 minutes. What is the probability of a customer call lasting between 5 to 8 minutes? 
+
+# P(X<=8) - P(X<=5)
+
+punif(8, 3, 12) - punif(5, 3, 12)
+
+# (8-5)/(12-3) = 3/9
+
+```
+
+```{r}
+# Suppose you are a project manager working on a construction project. The completion time follows a triangular distribution with a minimum time of 10 days, a maximum time of 30 days, and a most likely time of 18 days. What is the probability that a project takes 20 days to finish? 
+
+# dtriangle(x, min, max, mode) 
+# Parameters are the inputs needed to describe each distribution
+# Different distributions have different parameters
+
+dtriangle(20, 10, 30, 18)
+
+```
+
+```{r}
+# Suppose you are a project manager working on a construction project. The completion time follows a triangular distribution with a minimum time of 10 days, a maximum time of 30 days, and a most likely time of 18 days. What is the probability that a project takes between 15 and 20 days to finish? 
+
+# P(X<=20) - P(X<=15) = F(20) - F(15)
+
+# ptriangle(x, min, max, mode) 
+
+ptriangle(20, 10, 30, 18) - ptriangle(15, 10, 30, 18)
+
+```
+
+```{r}
+# The age of employees at a company follows a normal distribution, with a mean age of 30 years and a standard deviation of 3.5 years.
+
+# What is the percentage of people aged 27 years?
+
+# dnorm(x, mean, sd) gives f(x) = P(X=x)
+
+dnorm(27, mean = 30, sd = 3.5)
+
+```
+
+```{r}
+# The age of employees at a company follows a normal distribution, with a mean age of 30 years and a standard deviation of 3.5 years.
+
+# What is the percentage of people aged between 25 and 35 years?
+
+# P(X<=35) - P(X<=25) = F(35) - F(25)
+
+# pnorm(x, mean, sd) gives CDF, F(x) = P(X<=x)
+
+pnorm(35, mean = 30, sd = 3.5) - pnorm(25, 30, 3.5)
+
+
+```
+
+
+```{r}
+
+# Imagine you are managing a fleet of delivery trucks for a courier service. The time between breakdowns of your trucks follows an exponential distribution with a mean time between breakdowns of 5,000 miles driven. 
+
+# What is the probability that a truck will break down before it reaches 2,000 miles driven?
+
+# P(X<=2000)
+
+# dexp(x, rate) gives the probability P(X=x)
+# pexp(x, rate) gives cumulative probability P(X<=x)
+
+# mean = 1 breakdown per 5000 hours (miles)
+# rate (# of events per hour(miles)) = 1/time interval = 1/5000 breakdowns per hour (miles)
+
+pexp(2000, rate = 1/5000)
+
+```
+
+```{r}
+# As a quality control manager at a manufacturing plant, you are responsible for monitoring the time it takes for a machine to produce a specific component. The production time follows a gamma distribution with shape parameter (alpha) of 3 and rate parameter (beta) of 0.5. 
+
+# What is the probability that a machine will take between 4 and 6 hours to produce the component. 
+
+# dgamma(x, alpha, rate = 1/beta) gives the probability P(X=x)
+# pgamma(x, alpha, rate = 1/beta) gives cumulative probability P(X<=x)
+
+# P(X<=6) - P(X<=4)
+
+pgamma(6, 3, 1/0.5) - pgamma(4, 3, 1/0.5)
+
+
+```
+
+```{r}
+# You are a quality control manager at a food packaging company. Your task is to monitor the percentage of defective food items in a production batch. The percentage of defective items follows a beta distribution with with alpha = 8 and beta = 20. 
+
+# What is the probability that less than 10% of the items in this batch are defective?
+
+# dbeta(x, alpha, beta) gives the probability P(X=x)
+# pbeta(x, alpha, beta) gives cumulative probability P(X<=x)
+
+# P(X<=0.1)
+
+pbeta(0.10, 8, 20)
+
+
+```
+
+

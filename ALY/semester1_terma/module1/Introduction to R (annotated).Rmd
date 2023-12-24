@@ -1,0 +1,457 @@
+---
+title: "Introduction to R"
+# output: html_notebook
+output: pdf_document
+
+---
+
+```{r}
+# install packages if needed
+# install.packages('dplyr')
+# install.packages('ggplot2')
+
+# short-cut to run a block: ctrl + shft + enter
+# short-cut to run a line: ctrl + enter
+# short-cut to create a block for coding: ctrl + alt + I
+# move up/down blocks: ctrl + PgUp/PgDn
+
+```
+
+
+```{r}
+# import library (load a package) 
+library(ggplot2)
+library(dplyr)
+
+# import built-in data 
+data(mtcars)
+
+```
+
+
+```{r}
+# see a built-in dataset # Run each block with CTL + SHIFT + ENTER
+# to move to a block below: CTRL + Pg Down
+# each R block is enclosed by 
+
+mtcars # type the name of the data
+
+```
+
+```{r}
+# Get a summary of an object’s structure. 
+str(mtcars)
+
+```
+
+```{r}
+# Create Vectors
+
+# Assignment operator can be = or ' <- ' (based on personal preference)
+# shortcut for <- is ALT + '-'
+
+# Note that R is case sensitive
+
+# Join elements into a vector (3 numbers, 3, 5 ,7)
+x1 =  c(3,5,7) 
+x1 # print data
+
+# Create an integer sequence (colon)
+x2 = 3:8 # in R, the indexes are inclusive
+x2 # print data
+
+# Create a complex sequence (set intervals 'by')
+x3 = seq(3, 8, by=0.5)
+x3 # print data
+
+# Repeat a vector (3 times)
+x4 = rep(3:4, times=3)
+x4
+
+# Repeat a vector (3 times)
+x5 = rep(5, times=3)
+x5
+
+# Repeat elements of a vector
+x6 = rep(3:4, each=3)
+x6
+
+# Create a character vector 
+x7 = c('dog', 'cat', 'bird')
+x7
+
+5:8
+
+```
+
+```{r}
+# Vector Functions
+
+y = rep(3:4, each=3)
+
+y
+
+# Return x sorted (e.g. in ascending order)
+sort(y, decreasing = FALSE)
+
+# Return x reversed
+rev(y)
+
+# See counts of values
+table(y)
+
+# See unique values
+unique(y)
+
+# Find # of elements in vector
+length(y)
+
+# Find type of elements in vector
+typeof(y)
+
+# Change type of elements to character
+as.character(y)
+
+# Change type of elements to logical
+as.logical(0)
+as.logical(1)
+
+# Change type of elements to numbers
+as.numeric(TRUE)
+as.numeric('123')
+
+```
+
+```{r}
+# Select Vector Elements by Position
+# Unlike in Python, R objects are indexed starting at 1
+
+x2 = 3:8
+x2
+
+# create a vector in decreasing order
+x2 = 8:3
+
+# Select 3rd element (element at index 3) 
+x2[3]
+
+# Select all but the 3rd
+x2[-3]
+
+# Select the 3rd element from end
+rev(x2)[3]
+
+# Select elements 3 to 5 (inclusive)
+x2[3:5]
+
+# Select all elements except 3 to 5
+x2[-(3:5)]
+
+# Select elements 1 to 4
+x2[c(1:4)]
+
+# Select Vector Elements by Value
+
+# Select elements equal to 5
+x2[x2==5]
+
+# Select all elements greater than 5
+x2[x2>5]
+
+# Select elements in the set 3, 5, 7
+x2[x2 %in% c(3, 5, 7)]
+
+# calculations done for each element
+x2
+x2 + 1
+
+```
+
+```{r}
+# Logical Statements
+# Are equal: a == b
+# Not equal: a != b
+# Greater than: a > b
+# Less than: a < b
+# Greater than or equal to: a >= b
+# Less than or equal to: a <= b
+# Is missing: is.na(a)
+# Is null: is.null(a)
+
+a = 5
+b = 10
+c = 10
+
+a == b
+
+b == c
+
+a > b
+
+is.na(a)
+
+```
+
+```{r}
+# Math Functions
+# Natural log: log(x)
+# Exponential: exp(x)
+# Largest element: max(x)
+# Smallest element: min(x)
+# Round to n decimal places: round(x, n)
+# Round to n significant figures: signif(x, n)
+# Correlation: cor(x, y)
+# Sum: sum(x)
+# Mean: mean(x)
+# Median: median(x)
+# Percentage quantiles: quantile(x)
+# Rank of elements in ascending order: rank(x)
+# Variance: var(x)
+# Standard deviation: sd(x)
+
+y = c(1:10)
+y
+
+sum(y)
+
+log(y) # log of each element
+
+mean(y) 
+
+max(y)
+
+round(log(y), 3) # e.g. to 3 decimals 
+
+cor(y,log(y)) 
+
+var(y)
+
+sd(y)
+
+quantile(y)
+
+x = c(1,2,3,3,3,4,5,6,7) # Generate 4 random numbers 
+
+x
+
+rank(x) # default tie-breaking method is 'mean'
+
+as.integer(rank(x)) # show as integer
+
+rank(x, ties.method = 'min') # gives rank of minimum value in ascending order
+
+rank(-x, ties.method = 'min') # gives rank of minimum value in descending order
+
+# See R documentation for more functions
+
+```
+
+
+
+```{r}
+# Create a matrix from x
+# the [] on the x and y axes indicate the row and column numbers 
+x = c(1:20)
+m = matrix(x, nrow = 5, ncol = 4)
+m
+
+# Select row 2 
+m[2,]
+
+# Select column 3
+m[,3]
+
+# Select an element
+m[5,3]
+
+# Transpose
+t(m)
+
+```
+
+```{r}
+
+# A list is a collection of elements which can be of different types
+
+# Create a list which contains 2 vectors (1 with integers and 1 with strings)
+l = list(x = 5:10, y = c('a', 'b', 'c')) 
+l
+
+# Get the elements in the second list in l 
+
+l[[2]]
+
+# Get the first list in l 
+l[1]
+
+# Get elements in the list named x in l
+l$x # 'dollar sign' can be used to call elements in a list by name 
+# it's also used to call columns in a dataframe by name
+
+# Get the list named y in l 
+l['y']
+
+```
+
+
+```{r}
+# Get a summary of the data (mtcars is a dataframe)
+summary(mtcars)
+
+# Get number of rows in dataframe 
+nrow(mtcars)
+
+# Get number of columns in dataframe 
+ncol(mtcars)
+
+# Get dimension of dataframe 
+dim(mtcars)
+
+# Get variable names 
+colnames(mtcars)
+
+# print first 5 rows of dataframe
+head(mtcars, n=5)
+
+# print last 5 rows of dataframe
+tail(mtcars, n=5)
+
+# Get second column
+mtcars[,2]
+
+# Get second row
+mtcars[2,]
+
+# Get element in row 3, column 3
+mtcars[3,3]
+
+# Get a column by name 
+mtcars$mpg
+
+# Combine dataframes by columns (cbind, horizontally)
+mtcars2 = mtcars
+
+df1 = cbind(mtcars, mtcars2)
+
+df1 
+
+dim(mtcars)
+dim(mtcars2)
+dim(df1)
+
+# Choose subsets of a dataframe (show TRUE/FALSE)
+mtcars$hp > 200
+
+# Choose subsets of a dataframe (show actual data)
+mtcars$hp[mtcars$hp > 200]
+
+# Combine dataframes by rows (rbind, vertically)
+df2 = rbind(mtcars, mtcars2)
+
+df2 
+
+dim(mtcars)
+dim(mtcars2)
+dim(df2)
+
+```
+
+
+```{r}
+# Modify elements in a vector 
+x1 = c(1, 2, 3, 4, 5)
+x1 
+
+x1[1] = 100
+x1
+
+# Modify multiple elements in a vector 
+x1[1:3] = c(10, 20, 30)
+x1
+
+x1 = c(1, 2, 3, 4, 5)
+x1[c(1,3)] = c(10, 30)
+x1
+
+x1[c(2,4)] = 22
+x1
+
+# Modify elements in a dataframe
+data(mtcars)
+mtcars
+
+mtcars$hp[1:3] = 333
+mtcars
+
+# Modify elements in a dataframe based on a condition
+mtcars$hp[mtcars$hp == 110] = 0
+mtcars
+
+mtcars$hp[mtcars$hp > 50 & mtcars$hp < 100] = 0
+mtcars
+
+mtcars$hp[mtcars$hp == 0 | mtcars$hp == 105] = 111
+mtcars
+
+
+```
+
+```{r}
+# draw random numbers from a distribution 
+
+set.seed(100) # set a seed for the randomization to get the same results each time
+
+# draw n numbers from uniform distribution from min to max 
+x = runif(n = 10, min = 0, max = 10) 
+x
+  
+# draw n numbers from uniform distribution from min to max 
+x2 = rnorm(n = 10, mean = 0, sd = 1) 
+x2
+
+
+```
+
+```{r}
+# 1. To create a vector "10 11 12 13 14", what value should be assigned to x in the code below? 
+
+x:14
+
+x = 10
+x:14
+
+# 2. # 1. To create a vector "10.0 10.5 11.0 11.5 12.0", what value should be assigned to x in the code below? 
+
+seq(10, 12, by = x)
+
+x = 0.5
+seq(10, 12, by = x)
+
+# 3. To create a vector "1 1 1 1 2 2 2 2", what value should be assigned to x in the code below? 
+
+rep(1:2, each=x)
+
+x = 4
+rep(1:2, each=4)
+
+# 4. How many elements are in the vector called x below?
+
+x = c(rep(5, times=3), seq(10, 12, by = 0.3))
+
+# Ans: 10
+
+length(x)
+
+# 5. Use the mtcars data, what is the value at row 4 and column 6?
+
+mtcars[4,6]
+
+# Ans: 3.215
+
+# 6. Use the mtcars data, how many rows have the variable 'disp' greater than 150? 
+
+x = mtcars$disp[mtcars$disp > 150]
+length(x)
+
+```
+

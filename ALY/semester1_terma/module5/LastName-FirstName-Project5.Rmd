@@ -1,0 +1,234 @@
+---
+title: "LastName-FirstName-Project5.Rmd"
+output: html_document
+---
+
+
+```{r}
+cat("\014") # clears console 
+rm(list = ls()) # clears global environment 
+try(dev.off(dev.list()["RStudioGD"]), silent = TRUE) # clears plots 
+try(p_unload(p_loaded(), character.only = TRUE), silent = TRUE) # clears packages 
+options(scipen = 100) # disables scientific notation for entire R session
+
+# You should do this line only once in the entire course. 
+# install.packages("pacman") 
+
+library(pacman)
+p_load(testthat) 
+p_load(tidyverse)
+
+
+```
+
+# Using the ball-dataset
+
+```{r}
+# 1.	Download the data set ball-dataset.csv and read it into your script. Each ball in the dataset is represented by a color (red, blue, green, or yellow) and a label (A, B, C, D, or E).
+
+
+```
+
+```{r}
+# 2.	Create a frequency table as a data.frame or tibble that contains counts for each color of ball (freq_color).
+
+
+```
+
+```{r}
+# 3. Create a frequency table as a data.frame or tibble that contains counts for each label of ball (freq_label).
+
+
+```
+
+```{r}
+# 4. Create a bar chart of the ball data set representing the counts of the different colors.
+
+
+
+```
+
+```{r}
+# 5. Create a bar chart of the ball data set representing the counts of the different labels.
+
+  
+
+```
+
+```{r}
+# 6. What is the probability of drawing a green ball (prob6_result)?
+
+
+```
+
+```{r}
+# 7. What is the probability of drawing a blue or a red ball (prob7_result)?
+
+
+
+```
+
+```{r}
+# 8. What is the probability of drawing a ball with a label of A or C (prob8_result)?
+
+
+
+```
+
+```{r}
+# 9. What is the probability of drawing a yellow ball with a D (prob9_result)?
+
+
+
+```
+
+
+```{r}
+# 10. What is the probability of drawing a yellow ball or a ball with a D (prob10_result)?
+
+
+
+```
+
+
+
+```{r}
+# 11. What is the probability of drawing a blue ball followed by a red ball without replacement (prob11_result)?
+
+
+
+```
+
+```{r}
+# 12. What is the probability of drawing four green balls in a row without replacement (prob12_result)?
+
+  
+
+```
+
+```{r}
+# 13. What is the probability of drawing a red ball followed by a ball with a B without replacement (prob13_result)?
+
+
+```
+
+
+
+```{r}
+# 14. [Challenge] When making three draws without replacement, how many ways could you result in the letters “A”, “C”, “E”, in that order (prob14_result)?
+
+
+
+```
+
+```{r}
+# 15. [Challenge] If the order drawn does not matter, in how many ways could you draw three balls that spell “ACE” (prob15_result)?
+
+
+```
+
+
+```{r}
+# 16. [Challenge] Consider your result for Problem 14. What is the probability that the three balls that spell “ACE” are all green (prob16_result)?
+
+
+```
+
+```{r}
+# 17. Write the factorial function that computes the factorial of a given number.
+
+
+
+```
+
+# Creating a coin flipping data frame
+
+# For the following problems, consider an unfair coin that has a probability 0.6 of landing on heads.
+
+```{r}
+# 18. Manually create a data.frame or tibble that contains all possible outcomes of flipping the coin four times (coin_outcomes).
+
+
+```
+
+```{r}
+# 19. Compute the probability of each row outcome and store it as a column in the data. Frame or tibble (coin_outcomes).
+
+
+```
+
+
+```{r}
+# 20. There are 5 possible outcomes in our coin dataset if we count the number of heads in each row. For example, the row “H H H H” has 4 heads and the row “H T H T” has 2 heads. Compute the probability of each of the 5 possible outcomes (num_heads_prob).
+
+
+
+```
+
+
+```{r}
+# 21. What is the probability of an outcome of three heads (prob21_result)?
+
+
+```
+
+```{r}
+# 22. What is the probability of an outcome of two heads or four heads (prob22_result)?
+
+
+
+```
+
+```{r}
+# 23. What is the probability of an outcome of less than or equal to three heads (prob23_result)?
+
+
+
+```
+
+```{r}
+# 24. Create a bar chart where the x-axis is the outcome and the y-axis is the probability.
+
+
+
+
+```
+
+# Soccer Games
+
+# The following problems consider a soccer team with a 75% chance of winning a game at home and a 50% chance of winning away games. Consider that the team is about to play 10 games: five at home and five away.
+
+```{r}
+# 25. What is the probability that they will win exactly 10 games (prob25_result)?
+
+
+
+```
+
+```{r}
+# 26. What is the probability that they will win more than one game (prob26_result)?
+
+
+
+
+```
+
+
+```{r}
+# 27. How many different ways could you pick five games at random and have three home games and two away games (prob27_result)?
+
+
+```
+
+
+```{r}
+# Run this cell to check your answers 
+library(pacman)
+p_load(testthat) 
+p_load(tidyverse)
+test_file("project5_tests.R")
+
+```
+
+
+

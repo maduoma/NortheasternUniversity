@@ -1,0 +1,253 @@
+---
+title: "Data Transformation in R (dplyr)"
+output: html_notebook
+# output: pdf_document
+
+---
+ 
+```{r}
+# install package if needed 
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+# install.packages('dplyr')
+```
+
+```{r}
+# Load R packages
+library(ggplot2)
+library(tidyverse)
+library(dplyr) # data processing 
+
+```
+
+```{r}
+# Load built-in dataset mpg into the environment
+data(mpg)
+
+```
+
+```{r}
+# Basic functions 
+
+# look at data 
+head(mpg)
+
+# see a dense summary of data
+glimpse(mpg)
+
+# oepn data in another tab
+view(mpg)
+
+```
+
+```{r}
+# Pipe ' %>% ': a short-handed way to write functions; 
+# passes the variable on the left as the first parameter of the function on the right
+
+# no pipe
+group_by(mpg, class) # group data mpg by var class
+
+# with pipe (mpg is the first input var of the function following): same as group_by(mpg, class)
+# ctl + shft + M 
+mpg %>% group_by(class) 
+
+```
+
+```{r}
+# Combine vectors into data frame
+data_frame(x = c(135,251,61,16,11), y = c(532,15,1,661,1))
+
+```
+
+```{r}
+# Sort rows by values of a column (ascending)
+# mpg is the data; year is the var
+arrange(mpg, year)
+
+# Sort rows by values of a column (descending)
+arrange(mpg, desc(year))
+
+```
+```{r}
+# Rename a column (cyl to cylinder)
+df <- mpg
+rename(df, cylinder=cyl)
+rename(df, drive=drv)
+
+```
+
+```{r}
+# Filter by row 
+
+# Extract rows that meet the condition (displ>3)
+filter(mpg, mpg$displ>3)
+
+filter(mpg, mpg$manufacturer == 'audi')
+
+# Extract rows that meet the multiple conditions, sort by displ (descending)
+# OR
+filter(mpg, mpg$displ>5 | mpg$displ<3) %>% arrange(desc(displ))
+
+# Extract rows that meet the multiple conditions, sort by displ (descending)
+# AND
+filter(mpg, mpg$displ<5 & mpg$displ>3) %>% arrange(desc(displ))
+
+arrange(filter(mpg, mpg$displ<5 & mpg$displ>3), desc(displ))
+
+```
+
+
+```{r}
+# Filter by column
+
+# Select particular columns 
+select(mpg, model, displ, cty, hwy)
+
+# Select columns whose name contains a string
+select(mpg, contains('model'))
+
+# Select columns whose name starts with a string
+head(select(mpg, starts_with('d')))
+
+# Select columns whose name ends with a string
+head(select(mpg, ends_with('l')))
+
+# De-select particular columns 
+select(mpg, -model, -displ, -cty, -hwy)
+
+```
+
+```{r}
+# Remove duplicate rows
+distinct(mpg)
+
+```
+
+```{r}
+# Select rows by position e.g row 20 to 25
+slice(mpg, 20:25)
+
+```
+
+```{r}
+# Data Summary
+# Summarize data/variable with a function
+# Functions: first, last, nth, n, n_distinct, min, max, mean, median, var, sd, IQR, etc
+
+# Find mean of cyl
+summarise(mpg, value = mean(mpg$cyl))
+
+# Find mean and max of cyl
+summarise(mpg, value = mean(mpg$cyl), value2 = max(mpg$cyl))
+
+# Find IQR of cyl
+summarise(mpg, value = IQR(mpg$cyl))
+
+# Find nth value of cyl in a vector
+mpg$cyl
+summarise(mpg, value = nth(mpg$cyl, 5))
+
+# Find nth value of cyl in a vector e.g. 4th from end
+mpg$cyl
+summarise(mpg, value = nth(mpg$cyl, -4))
+
+# Find # of unique values of cyl in a vector
+distinct(mpg, mpg$cyl)
+
+summarise(mpg, value = n_distinct(mpg$cyl))
+
+
+```
+
+```{r}
+# Group data
+
+# Group data into rows by class (group mpg data by class) 
+group_by(mpg, class)
+
+# Group by class and apply a calculation for each selected variable
+
+# na.rm: whether missing (null) values are removed
+
+summarise(group_by(mpg, class), mean_cty = mean(cty, na.rm=TRUE), mean_hwy = mean(hwy, na.rm=TRUE))
+
+# Group by class and apply a calculation for all applicable variables
+summarise_all(group_by(mpg, class), funs(mean(.,na.rm=TRUE)))
+
+# Group by class and apply a calculation for selected variables
+summarise_at(group_by(mpg, class), vars(displ, cty), funs(mean(.,na.rm=TRUE)))
+
+# Group by class and apply a calculation for selected variables
+summarise_at(group_by(mpg, class), vars(displ, cty), funs(mean(.,na.rm=TRUE), sum(.,na.rm=TRUE)))
+
+# Group by class and count each group's data points
+summarise(group_by(mpg, class), count = n())
+
+# Group by class and give cumulative count of a variable 
+summarise(group_by(mpg, class), cum_count = cumsum(cty))
+
+```
+
+```{r}
+# Create new variables 
+
+# Calculate and append one or more new columns (e.g. average of cyl and displ)
+mpg2 = mutate(mpg, new1 = (cyl+displ)/2)
+mpg2
+
+# Round to 1 decimal
+mutate(mpg2, new1_rounded = round(new1, 1))
+
+# Calculate one or more new columns. Drop original columns
+transmute(mpg, new1 = (cyl+displ)/2)
+
+```
+
+```{r}
+# Combine Dataframes
+
+a <- data_frame(x = c('a','b','c','d'), y = c(11,22,33,44))
+b <- data_frame(x = c('a','b','c','e'), y = c(55,66,77,88))
+
+# Combine vertically
+bind_rows(a, b)
+
+# Combine horizontally
+bind_cols(a, b)
+
+```
+
+# Exercises: 
+
+
+
+```{r}
+# 1. Use the built-in mpg data. Extract rows with year between 1999 and 2002 inclusive. Sort by the variable cty (descending). What is the value at index [4, 5]
+
+df = filter(mpg, mpg$year>=1999 & mpg$year<=2002) %>% arrange(desc(cty))
+
+df
+df[4, 5]
+
+# Ans: 4
+
+# 2. Group the mpg data by year. For each year, calculate the average displ. What is the average displ for year 1999? Round to nearest 2 decimals. 
+
+# summarise_at(group_by(mpg, year), vars(displ), funs(mean(.,na.rm=TRUE))) %>% filter(year==1999)
+
+summarise(group_by(mpg, year), mean_displ = mean(displ, na.rm=TRUE))
+
+# Ans: 3.28
+
+# 3. Create a new variable cty_hwy that sums up the variables cty and hwy mileage. Calculate the average cty_hwy for each year. What is the average cty_hwy for year 1999? Round to nearest 2 decimals. 
+
+df2 = mutate(mpg, cty_hwy = cty+hwy) 
+df2
+
+# summarise(group_by(df2, year), mean_cty_hwy = mean(cty_hwy, na.rm=TRUE))
+
+mutate(mpg, cty_hwy = cty+hwy) %>% group_by(year) %>% summarise(mean_cty_hwy = mean(cty_hwy, na.rm=TRUE))
+
+# Ans: 40.44
+
+```

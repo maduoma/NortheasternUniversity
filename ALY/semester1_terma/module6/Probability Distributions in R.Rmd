@@ -1,0 +1,111 @@
+---
+title: "Probability Distributions in R.Rmd"
+output: html_document
+---
+
+```{r}
+# Consider the Boston Red Sox playing a stretch of 5 games, where the probability of winning a game is 0.6 and an outcome is the number of wins during those 5 games.
+
+# What is the probability that the Red Sox will win exactly 4 games?
+
+
+dbinom(4, 5, 0.6)
+
+
+
+```
+
+```{r}
+# What is the probability that the Red Sox will win fewer than 3 games?
+
+
+pbinom(2, 5, 0.6)
+
+```
+
+```{r}
+# What is the probability that the Red Sox will win between 2 and 4 games inclusively out of 5 games?
+
+
+pbinom(4, 5, 0.6) - pbinom(1, 5, 0.6)
+
+dbinom(2, 5, 0.6) + dbinom(3, 5, 0.6) + dbinom(4, 5, 0.6)
+
+
+```
+
+
+```{r}
+# Generate 1,000 random values for the number of wins by the Red Sox in a 5-game series. Use set.seed(10) before generating the random values. Find the mean and variance of the sample. 
+
+set.seed(10)
+values = rbinom(1000, 5, 0.6)
+values 
+
+mean(values)
+
+var(values)
+
+
+```
+
+```{r}
+# The number of calls received each hour at a call center follows a Poisson distribution averaging 10 calls per employee per hour.
+
+# What is the probability that an employee will receive exactly 5 calls in the next hour?
+
+
+dpois(5, 10)
+
+
+```
+
+```{r}
+# What is the probability that an employee will receive 15 or fewer calls in the next 3 hours?
+
+ppois(15, 30)
+
+
+```
+
+```{r}
+# Generate 1,000 random values for the number of calls for a single employee during an 3-hour shift. Use a set.seed(10) before creating values.
+
+set.seed(10)
+values = rpois(1000, 30)
+
+mean(values)
+
+var(values)
+
+```
+
+```{r}
+# The life spans of light bulbs at a certain manufacturing company follow a normal distribution, with a mean life span of 1,000 hours and a standard deviation of 120 hours.
+
+pnorm(1200, mean = 1000, sd = 120) - pnorm(1000, 1000, 120)
+
+
+```
+
+```{r}
+# Light bulbs that fall in the bottom 5% of life spans are considered defective and can be returned for a full refund. What is the maximum number of hours in a light bulb's life span for it to fall into the defective category? 
+
+
+qnorm(0.05, 2000, 100)
+
+```
+
+
+```{r}
+# Generate 1,000 random values for the life spans of manufactured light bulbs. Use set.seed(10) before generating the values. 
+
+set.seed(10)
+values = rnorm(10000, 2000, 100)
+
+mean(values)
+
+var(values)
+
+```
+

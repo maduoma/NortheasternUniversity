@@ -1,0 +1,253 @@
+---
+title: "LastName-FirstName-Project2.Rmd"
+output: html_document
+---
+
+
+```{r}
+cat("\014") # clears console 
+rm(list = ls()) # clears global environment 
+try(dev.off(dev.list()["RStudioGD"]), silent = TRUE) # clears plots 
+try(p_unload(p_loaded(), character.only = TRUE), silent = TRUE) # clears packages 
+options(scipen = 100) # disables scientific notation for entire R session
+
+# You should do this line only once in the entire course. 
+# install.packages("pacman") 
+
+library(pacman)
+p_load(testthat) 
+p_load(tidyverse)
+p_load(ggplot2)
+
+```
+
+# Assignment Part 1
+
+```{r}
+# 1. Read the data set 2015.csv and store it in a variable called data_2015. You can test that you loaded it correctly with the code utilizing the head function below.
+
+
+```
+
+```{r}
+# 2. Use the function names to produce the column names for your data set.
+
+
+```
+
+```{r}
+# 3. Use the view function to view the data set in a separate tab.
+
+
+```
+
+```{r}
+# 4. Use the glimpse function to view your data set in another configuration.
+
+
+```
+
+```{r}
+# 5. Use p_load to install the janitor package. Janitor has a function called clean_names that can be given a data frame to make the names more R friendly. Be sure to store the resulting converted data frame in a variable (use data_2015 again). Compare the columns names now to the ones before.
+
+  
+
+```
+
+```{r}
+# 6. 	Select from the data set the country, region, happiness_score, and freedom columns. Store this new table as happy_df.
+
+
+```
+
+```{r}
+# 7. Slice the first 10 rows from happy_df and store it as top_ten_df.
+
+
+```
+
+```{r}
+# 8. From happy_df filter the table for freedom values under 0.20. Store this new table as no_freedom_df.
+
+
+```
+
+```{r}
+# 9. Arrange the values in happy_df in descending order by their freedom values. Store this new table as best_freedom_df.
+
+
+
+```
+
+
+```{r}
+# 10. Create a new column with mutate in data_2015 called gff_stat. For each row, the gff_stat is the sum of the family, freedom, and generosity values. Store the resulting table right in the data_2015 variable.
+  
+```
+
+
+
+```{r}
+# 11. Summarize the happy_df data set. Your summary should contain the mean happiness_score in a column called mean_happiness, the max happiness_score in a column called max_happiness, the mean freedom in a column called mean_freedom, and the max freedom in a column called max_freedom. Store the resulting table as happy_summary.
+
+
+
+
+```
+
+```{r}
+# 12. Group the happy_df data set by region. Run a summary that provides the number of countries in each region in a column called country_count, the mean happiness for each region in a column called mean_happiness, and the mean freedom of each region in a column called mean_freedom. Store your resulting table in a variable called regional_stats_df.
+
+
+
+```
+
+```{r}
+# 13. [Challenge Problem] Compare the average gdp per capita of the ten least happy Western European countries with the ten happiest Sub-Saharan African countries. For testing, you can store the resulting data.frame or table as gdp_df.
+
+
+```
+
+
+
+```{r}
+# 14. [Challenge problem] From your regional_stats_df, create a scatterplot of mean_happiness vs. mean_freedom. Draw a line segment from the smallest of these values to the largest.
+
+
+```
+
+# Assignment Part 2
+
+```{r}
+# 1. Download the baseball.csv data set. data set that represents batting statistics from the 1986 Major League Baseball season. Read this data set in a variable called baseball.
+
+```
+
+```{r}
+# 2. Spend time with the data using various exploration functions to get a general feel for what you are working with. For more information on this data set and its various columns, see Baseball Reference’s  1986 Major League Standard Batting.
+
+
+```
+
+
+```{r}
+# 3. Use the class function to discover the type of class represented in the baseball data set.
+
+
+```
+
+
+```{r}
+# 4. For each age, compute the following: the number of people at that age, the average number of home runs (HRs), the average number of hits, and the average number of runs scored. Store these computations in a variable called age_stats_df.
+
+
+
+```
+
+```{r}
+# 5. Remove (filter) from baseball any player with 0 at bats (AB). Store the result in baseball.
+
+
+```
+
+```{r}
+# 6. Add a new column batting average called BA. Batting average is computed by the number of hits (H) divided by the number of at bats (AB). Store the result in baseball.
+
+
+```
+
+```{r}
+# 7. Modify your new BA column so that the value is rounded to three (3) decimal places.
+
+
+```
+
+```{r}
+# 8. On-base percentage (OBP) is arguably a better statistic than batting average. Create a column called OBP that computes this stat as (H + BB) / (AB + BB). Store the result in baseball.
+
+
+```
+
+```{r}
+# 9. Modify your new OBP column so that the value is rounded to three (3) decimal places.
+
+
+
+```
+
+```{r}
+# 10. Determine the 10 players who struck out the most this season. Store these results as strikeout_artist.
+
+
+```
+
+```{r}
+# 11. Using a scatterplot (geom_point), plot the number of home runs (HRs) (the x-axis), versus the number of RBIs (the y-axis) per player.
+
+
+```
+
+```{r}
+# 12. To be eligible for end-of-season awards, a player must have either at least 300 at bats or appear in at least 100 games. Keep only the players who are eligible to be considered and store them in a variable called eligible_df.
+
+
+
+```
+
+```{r}
+# 13. For eligible players, create a histogram of batting average. Use a binwidth of .025 in your graph. The graph should be drawn in blue and filled in green.
+
+
+```
+
+```{r}
+# 14. Use the following code to create a ranking column of eligible players with regard to home runs (HRs). Store the result in eligible_df.
+
+
+
+```
+
+```{r}
+# 15. Repeat the prior step to create rankings for both runs batted in (RBI) and on-base percentage (OBP). Store the result in eligible_df.
+
+
+
+```
+
+```{r}
+# 16. Create a TotalRank column that is the sum of the prior three (3) ranks. If a player was ranked first in HR, RBI, and OBP, then their total rank would be 3. Store the result in eligible_df.
+
+
+
+```
+
+
+
+```{r}
+# 17. Arrange the data in ascending order by TotalRank and store the twenty (20) lowest TotalRank scores in a variable called mvp_candidates.
+
+
+```
+
+```{r}
+# 18. Create a variable called mvp_candidates_abbreviated with the First, Last, RankHR, RankRBI, RankOBP, and TotalRank selected from mvp_candidates.
+
+
+```
+
+```{r}
+# 19. In a separate report, make a recommendation for the league most valuable player (MVP). Keep in mind that the dataset completely ignores pitchers. You can decide whether a pitcher should be eligible for the MVP. Base your decision on the data you have analyzed. You may choose to do additional analysis at your discretion. You should produce a concise, written executive summary that, in addition to the title page and citations, contains an introduction, presentation of written key findings supported by visualizations, and a conclusion that contains your recommendations as supported by the data. Your executive summary should adhere to basic APA guidelines.
+```
+
+
+```{r}
+# Run this cell to check your answers 
+library(pacman)
+p_load(testthat) 
+p_load(tidyverse)
+test_file("project2_tests.R")
+
+```
+
+
+

@@ -1,0 +1,50 @@
+---
+title: "ANOVA"
+output: html_notebook
+---
+
+```{r}
+# install package if needed 
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+```
+
+```{r}
+# Load R packages
+library(ggplot2)
+library(tidyverse)
+
+```
+
+```{r}
+# Load built-in dataset 'mtcars' 
+data(mtcars)
+
+mtcars
+
+```
+
+
+```{r}
+# One-Way ANOVA
+results = aov(formula = mpg ~ cyl, data = mtcars) # store results in the var 'results'
+summary(results) # see summary of the results
+
+
+```
+
+```{r}
+# N-Way ANOVA: 2 or more variables
+results2 = aov(formula = mpg ~ cyl + vs, data = mtcars) # store results in the var 'results'
+summary(results2) # see summary of the results
+
+
+```
+
+```{r}
+# N-Way ANOVA with Interactions
+results3 = aov(formula = mpg ~ cyl*vs*am, data = mtcars)
+summary(results3)
+
+```
+

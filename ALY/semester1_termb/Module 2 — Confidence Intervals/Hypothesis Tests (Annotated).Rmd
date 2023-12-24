@@ -1,0 +1,117 @@
+---
+title: "Hypothesis Tests"
+output: html_notebook
+---
+
+```{r}
+# install package if needed 
+# install.packages('ggplot2')
+# install.packages('tidyverse')
+```
+
+```{r}
+# Load R packages
+library(ggplot2)
+library(tidyverse)
+
+```
+
+```{r}
+# Load built-in dataset into the environment
+# midwest: a dataset in ggplot2 with demographic information of midwest counties
+data(midwest)
+
+midwest
+
+```
+
+```{r}
+# Look at the data
+head(midwest)
+
+```
+
+```{r}
+# Look at the first 10 values in the percollege variable
+head(midwest$percollege, 10)
+
+# Get summary statistics of the percollege variable 
+summary(midwest$percollege)
+
+# Set plot size
+options(repr.plot.width=6, repr.plot.height=3)
+
+# Histogram of percollege
+ggplot(midwest, aes(percollege)) + geom_histogram()
+
+# Boxplot of percollege
+ggplot(midwest, aes(percollege)) + geom_boxplot() + coord_flip()
+
+
+```
+
+
+```{r}
+# One sample t-test for difference in means
+
+# Use t.test function
+# Parameters:
+# mu: value to be tested against
+# paired: paired test or not
+# alternative: two.sided, less, or greater
+# conf.level: confidence level
+
+# Test the null hypothesis that mean percollege = 25 at 95% confidence level
+# alternative hypothesis: true mean is not equal to 25
+# null hypothesis has '=', we are using a 2-sided test
+t.test(midwest$percollege, mu = 25, paired = FALSE, alternative = 'two.sided', conf.level = 0.95)
+
+# p-value ~ 0, so rej the H0 and conclude that avg % of people who go to college is not 25
+
+```
+
+
+```{r}
+# Test the null hypothesis that mean percollege = 25 at 90% confidence level
+# alternative hypothesis: true mean is not equal to 25
+# null hypothesis has '=', we are using a 2-sided test
+t.test(midwest$percollege, mu = 25, paired = FALSE, alternative = 'two.sided', conf.level = 0.90)
+
+# p-value ~ 0, so rej the H0 and conclude that avg % of people who go to college is not 25
+
+```
+
+```{r}
+# Test the null hypothesis that mean percollege = 25 at 99% confidence level
+# alternative hypothesis: true mean is not equal to 25
+# null hypothesis has '=', we are using a 2-sided test
+t.test(midwest$percollege, mu = 25, paired = FALSE, alternative = 'two.sided', conf.level = 0.99)
+
+# p-value ~ 0, so rej the H0 and conclude that avg % of people who go to college is not 25
+
+# CI is wider because conf level is higher 
+
+
+```
+
+
+```{r}
+# Test the null hypothesis that mean percollege >= 25 at 95% confidence level
+# alternative hypothesis: true mean is less than 25
+t.test(midwest$percollege, mu = 25, paired = FALSE, alternative = 'less', conf.level = 0.95)
+
+# p-value ~ 0, rej H0 and conclude alternative hypothesis is true: true mean is less than 25
+
+
+```
+
+
+```{r}
+# Test the null hypothesis that mean percollege <= 25 at 95% confidence level
+# alternative hypothesis: true mean is greater than 25
+t.test(midwest$percollege, mu = 25, paired = FALSE, alternative = 'greater', conf.level = 0.95)
+
+# p-value = 1, don't rej H0
+
+```
+

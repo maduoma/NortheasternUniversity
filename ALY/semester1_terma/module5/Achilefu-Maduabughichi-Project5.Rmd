@@ -1,0 +1,525 @@
+---
+title: "Achilefu-Maduabughichi-Project5.Rmd"
+output: html_document
+---
+
+
+```{r}
+cat("\014") # clears console 
+rm(list = ls()) # clears global environment 
+try(dev.off(dev.list()["RStudioGD"]), silent = TRUE) # clears plots 
+try(p_unload(p_loaded(), character.only = TRUE), silent = TRUE) # clears packages 
+options(scipen = 100) # disables scientific notation for entire R session
+
+# You should do this line only once in the entire course. 
+# install.packages("pacman") 
+
+library(pacman)
+p_load(testthat) 
+p_load(tidyverse)
+
+
+```
+
+# Using the ball-dataset
+
+```{r}
+# 1.	Download the data set ball-dataset.csv and read it into your script. Each ball in the dataset is represented by a color (red, blue, green, or yellow) and a label (A, B, C, D, or E).
+
+# Reads the dataset contenst into ball-dataset
+ball_dataset <- read.csv("ball-dataset.csv")
+
+# Prints result
+ball_dataset
+
+```
+
+```{r}
+# 2.	Create a frequency table as a data.frame or tibble that contains counts for each color of ball (freq_color).
+
+# Creates a frequency table for the 'color' column
+freq_color <- as.data.frame(table(ball_dataset$color))
+colnames(freq_color) <- c("color", "count")
+
+# Displays the frequency table
+freq_color
+
+```
+
+```{r}
+# 3. Create a frequency table as a data.frame or tibble that contains counts for each label of ball (freq_label).
+
+# Creates frequency table for label
+freq_label <- as.data.frame(table(ball_dataset$label))
+colnames(freq_label) <- c("label", "count")
+# Prints result
+freq_label
+```
+
+```{r}
+# 4. Create a bar chart of the ball data set representing the counts of the different colors.
+
+# Creates a frequency table for the 'color' column
+freq_color <- table(ball_dataset$color)
+
+# Creates the bar chart
+barplot(freq_color, col = names(freq_color), xlab = "Color", ylab = "Count", main = "Counts of Different Colors of Balls")
+
+```
+
+```{r}
+# 5. Create a bar chart of the ball data set representing the counts of the different labels.
+
+  # Loads required libraries
+library(ggplot2)
+
+# Creates a frequency table for the 'label' column
+freq_label <- as.data.frame(table(ball_dataset$label))
+colnames(freq_label) <- c("label", "count")
+
+# Creates a bar chart for the counts of different labels
+ggplot(freq_label, aes(x=label, y=count)) +
+  geom_bar(stat="identity", fill="blue") +
+  xlab("Label") +
+  ylab("Count") +
+  ggtitle("Counts of Different Labels of Balls")
+
+
+```
+
+```{r}
+# 6. What is the probability of drawing a green ball (prob6_result)?
+
+# Calculates the total number of balls
+total_balls <- nrow(ball_dataset)
+
+# Calculates the number of green balls
+green_balls <- sum(ball_dataset$color == "green")
+
+# Calculates the probability of drawing a green ball
+prob6_result <- green_balls / total_balls
+
+# Prints the probability
+prob6_result
+
+```
+
+```{r}
+# 7. What is the probability of drawing a blue or a red ball (prob7_result)?
+
+# Creates a frequency table for the 'color' column
+freq_color <- table(ball_dataset$color)
+
+# Calculates the total number of balls
+total_balls <- nrow(ball_dataset)
+
+# Calculates the number of blue balls
+blue_balls <- freq_color["blue"]
+
+# Calculates the number of red balls
+red_balls <- freq_color["red"]
+
+# Calculates the probability of drawing a blue or a red ball
+prob7_result <- (blue_balls + red_balls) / total_balls
+prob7_result <- as.numeric(unname(prob7_result))
+prob7_result
+
+```
+
+```{r}
+# 8. What is the probability of drawing a ball with a label of A or C (prob8_result)?
+
+# Calculates the total number of balls
+total_balls <- nrow(ball_dataset)
+
+# Creates a frequency table for the 'label' column
+freq_label <- as.data.frame(table(ball_dataset$label))
+
+# Calculates the number of balls with label 'A'
+label_A_balls <- freq_label[freq_label$Var1 == 'A',]$Freq
+
+# Calculates the number of balls with label 'C'
+label_C_balls <- freq_label[freq_label$Var1 == 'C',]$Freq
+
+# Calculates the probability of drawing a ball with a label of 'A' or 'C'
+prob8_result <- (label_A_balls + label_C_balls) / total_balls
+prob8_result
+
+```
+
+```{r}
+# 9. What is the probability of drawing a yellow ball with a D (prob9_result)?
+
+# Calculates the total number of balls
+total_balls <- nrow(ball_dataset)
+
+# Filters the data frame to get the count of yellow balls with label 'D'
+yellow_D_balls <- nrow(subset(ball_dataset, color == 'yellow' & label == 'D'))
+
+# Calculates the probability of drawing a yellow ball with label 'D'
+prob9_result <- yellow_D_balls / total_balls
+prob9_result
+
+```
+
+
+```{r}
+# 10. What is the probability of drawing a yellow ball or a ball with a D (prob10_result)?
+
+
+# Calculates the total number of balls
+total_balls <- nrow(ball_dataset)
+
+# Calculates the number of yellow balls
+yellow_balls <- nrow(subset(ball_dataset, color == "yellow"))
+
+# Calculates the number of balls with label 'D'
+label_D_balls <- nrow(subset(ball_dataset, label == "D"))
+
+# Calculates the number of yellow balls with label 'D' (to avoid double counting)
+yellow_D_balls <- nrow(subset(ball_dataset, color == "yellow" & label == "D"))
+
+# Calculates the probability of drawing a yellow ball or a ball with a label 'D'
+prob10_result <- (yellow_balls + label_D_balls - yellow_D_balls) / total_balls
+prob10_result
+
+
+```
+
+
+
+```{r}
+# 11. What is the probability of drawing a blue ball followed by a red ball without replacement (prob11_result)?
+
+# Calculates the total number of balls
+total_balls <- nrow(ball_dataset)
+
+# Calculates the number of blue balls
+blue_balls <- sum(ball_dataset$color == "blue")
+
+# Calculates the number of red balls
+red_balls <- sum(ball_dataset$color == "red")
+
+# Calculates the probability of drawing a blue ball followed by a red ball without replacement
+prob11_result <- (blue_balls / total_balls) * (red_balls / (total_balls - 1))
+prob11_result
+
+```
+
+```{r}
+# 12. What is the probability of drawing four green balls in a row without replacement (prob12_result)?
+
+# Calculates the total number of balls
+total_balls <- nrow(ball_dataset)
+
+# Calculates the number of green balls
+green_balls <- sum(ball_dataset$color == "green")
+
+# Calculates the probability of drawing four green balls in a row without replacement
+prob12_result <- (green_balls / total_balls) * 
+                 ((green_balls - 1) / (total_balls - 1)) * 
+                 ((green_balls - 2) / (total_balls - 2)) * 
+                 ((green_balls - 3) / (total_balls - 3))
+
+# Print the result
+prob12_result
+
+```
+
+```{r}
+# 13. What is the probability of drawing a red ball followed by a ball with a B without replacement (prob13_result)?
+# Count the total number of balls
+total_balls <- nrow(ball_dataset)
+
+# Counts the number of red balls
+red_balls <- sum(ball_dataset$color == "red")
+
+# Counts the number of balls with label 'B'
+label_B_balls <- sum(ball_dataset$label == "B")
+
+# Calculates the probability of drawing a red ball followed by a ball with a label 'B' without replacement
+prob13_result <- (red_balls / total_balls) * (label_B_balls / (total_balls - 1))
+prob13_result
+
+
+```
+
+
+
+```{r}
+# 14. [Challenge] When making three draws without replacement, how many ways could you result in the letters “A”, “C”, “E”, in that order (prob14_result)?
+
+# Calculates the number of balls with each label
+freq_label <- table(ball_dataset$label)
+
+# Extracts the counts for labels 'A', 'C', and 'E'
+label_A_balls <- freq_label["A"]
+label_C_balls <- freq_label["C"]
+label_E_balls <- freq_label["E"]
+
+# Calculates the number of ways to draw 'A', 'C', 'E' in that order without replacement
+prob14_result <- label_A_balls * label_C_balls * label_E_balls
+
+# Prints the result
+prob14_result <- as.numeric(unname(prob14_result))
+
+prob14_result
+
+```
+
+```{r}
+# 15. [Challenge] If the order drawn does not matter, in how many ways could you draw three balls that spell “ACE” (prob15_result)?
+# Read the dataset into a data frame
+ball_dataset <- read.csv("ball-dataset.csv")
+
+# Creates a frequency table for the 'label' column
+freq_label <- table(ball_dataset$label)
+
+# Extracts the number of balls with each label
+label_a_balls <- freq_label["A"]
+label_c_balls <- freq_label["C"]
+label_e_balls <- freq_label["E"]
+
+# Number of ways to draw "A", "C", "E" in that order without replacement
+prob14_result <- label_a_balls * label_c_balls * label_e_balls
+
+# Number of ways to draw "ACE" when the order does not matter
+prob15_result <- factorial(3) * prob14_result  # 3! = 3 x 2 x 1
+
+prob15_result <- as.numeric(unname(prob15_result))
+
+prob15_result
+
+```
+
+
+```{r}
+# 16. [Challenge] Consider your result for Problem 14. What is the probability that the three balls that spell “ACE” are all green (prob16_result)?
+
+# Reads the dataset into a data frame
+df <- read.csv("ball-dataset.csv")
+
+# Counts the occurrences of each label in the dataset
+label_counts <- table(df$label)
+
+# Counts the occurrences of each label that are also green in color
+green_label_counts <- table(df[df$color == 'green',]$label)
+
+# Calculates the number of ways to draw "A", "C", "E" in that order without replacement
+prob14_result <- label_counts['A'] * label_counts['C'] * label_counts['E']
+
+# Calculates the number of ways to draw a green "A", "C", "E" in that order without replacement
+prob16_result <- green_label_counts['A'] * green_label_counts['C'] * green_label_counts['E']
+
+# Calculates the probability
+if (prob14_result == 0) {
+  prob16_result <- 0  # Avoid division by zero
+} else {
+  prob16_result <- prob16_result / prob14_result
+}
+
+# Prints the result
+prob16_result <- as.numeric(unname(prob16_result))
+
+prob16_result
+
+```
+
+```{r}
+# 17. Write the factorial function that computes the factorial of a given number.
+
+# Redefines the factorial function to handle negative numbers
+factorial <- function(n) {
+  if (n < 0) {
+    return(-1)
+  }
+  if (n == 0) {
+    return(1)
+  } else {
+    return(n * Recall(n - 1))
+  }
+}
+
+factorial_func
+
+```
+
+# Creating a coin flipping data frame
+
+# For the following problems, consider an unfair coin that has a probability 0.6 of landing on heads.
+
+```{r}
+# 18. Manually create a data.frame or tibble that contains all possible outcomes of flipping the coin four times (coin_outcomes).
+
+coin_outcomes <- expand.grid(
+  Flip1 = c("H", "T"),
+  Flip2 = c("H", "T"),
+  Flip3 = c("H", "T"),
+  Flip4 = c("H", "T")
+)
+coin_outcomes
+
+```
+
+```{r}
+# 19. Compute the probability of each row outcome and store it as a column in the data. Frame or tibble (coin_outcomes).
+
+coin_outcomes$Probability <- apply(coin_outcomes, 1, function(x) {
+  prob = 1
+  for (flip in x) {
+    if (flip == "H") {
+      prob = prob * 0.6
+    } else {
+      prob = prob * 0.4
+    }
+  }
+  return(prob)
+})
+
+coin_outcomes
+```
+
+
+```{r}
+# 20. There are 5 possible outcomes in our coin dataset if we count the number of heads in each row. For example, the row “H H H H” has 4 heads and the row “H T H T” has 2 heads. Compute the probability of each of the 5 possible outcomes (num_heads_prob).
+
+library(dplyr)
+
+# Computes the number of heads in each row
+coin_outcomes$Num_Heads <- rowSums(coin_outcomes == "H")
+
+# Calculates the probability for each number of heads (0 to 4)
+num_heads_prob <- coin_outcomes %>%
+  group_by(Num_Heads) %>%
+  summarise(Total_Probability = sum(Probability))
+
+num_heads_prob
+
+```
+
+
+```{r}
+# 21. What is the probability of an outcome of three heads (prob21_result)?
+
+# Correctly calculates the probability of 3 heads in 4 coin flips
+prob21_result <- choose(4, 3) * (0.6)^3 * (0.4)^1
+
+prob21_result
+```
+
+```{r}
+# 22. What is the probability of an outcome of two heads or four heads (prob22_result)?
+
+
+# Calculating the probability of 2 heads in 4 coin flips
+prob_2_heads <- choose(4, 2) * (0.6)^2 * (0.4)^2
+
+# Calculates the probability of 4 heads in 4 coin flips
+prob_4_heads <- choose(4, 4) * (0.6)^4 * (0.4)^0
+
+# Sums the probabilities
+prob22_result <- prob_2_heads + prob_4_heads
+
+prob22_result
+```
+
+```{r}
+# 23. What is the probability of an outcome of less than or equal to three heads (prob23_result)?
+
+# Calculates the probabilities for 0 to 3 heads
+prob_0_heads <- choose(4, 0) * (0.6)^0 * (0.4)^4
+prob_1_heads <- choose(4, 1) * (0.6)^1 * (0.4)^3
+prob_2_heads <- choose(4, 2) * (0.6)^2 * (0.4)^2
+prob_3_heads <- choose(4, 3) * (0.6)^3 * (0.4)^1
+
+# Sums the probabilities for 0 to 3 heads
+prob23_result <- prob_0_heads + prob_1_heads + prob_2_heads + prob_3_heads
+
+prob23_result
+```
+
+```{r}
+# 24. Create a bar chart where the x-axis is the outcome and the y-axis is the probability.
+
+
+library(ggplot2)
+
+# Plots the bar chart
+ggplot(num_heads_prob, aes(x = factor(Num_Heads), y = Total_Probability)) +
+  geom_bar(stat = "identity") +
+  xlab("Number of Heads") +
+  ylab("Probability") +
+  ggtitle("Probability Distribution of Number of Heads in 4 Coin Flips") +
+  theme_minimal()
+
+
+```
+
+# Soccer Games
+
+# The following problems consider a soccer team with a 75% chance of winning a game at home and a 50% chance of winning away games. Consider that the team is about to play 10 games: five at home and five away.
+
+```{r}
+# 25. What is the probability that they will win exactly 10 games (prob25_result)?
+
+# Calculates the probability of winning all 5 home games
+prob_home_games <- 0.75^5
+
+# Calculates the probability of winning all 5 away games
+prob_away_games <- 0.5^5
+
+# Calculates the probability of winning all 10 games
+prob25_result <- prob_home_games * prob_away_games
+
+prob25_result
+```
+
+```{r}
+# 26. What is the probability that they will win more than one game (prob26_result)?
+
+
+# Calculates the probability of winning zero home and away games
+prob_0_home_games <- choose(5, 0) * 0.75^0 * 0.25^5
+prob_0_away_games <- choose(5, 0) * 0.5^0 * 0.5^5
+prob_0_games <- prob_0_home_games * prob_0_away_games
+
+# Calculates the probability of winning exactly one home or away game
+prob_1_home_0_away_games <- choose(5, 1) * 0.75^1 * 0.25^4 * prob_0_away_games
+prob_0_home_1_away_games <- choose(5, 1) * 0.5^1 * 0.5^4 * prob_0_home_games
+
+# Sums these probabilities
+prob_0_or_1_games <- prob_0_games + prob_1_home_0_away_games + prob_0_home_1_away_games
+
+# Calculates the probability of winning more than one game
+prob26_result <- 1 - prob_0_or_1_games
+
+prob26_result
+```
+
+
+```{r}
+# 27. How many different ways could you pick five games at random and have three home games and two away games (prob27_result)?
+
+# Calculate the number of combinations for 3 home games and 2 away games
+combinations_home <- choose(5, 3)
+combinations_away <- choose(5, 2)
+
+# Calculates the total number of ways to have 3 home games and 2 away games
+prob27_result <- combinations_home * combinations_away
+
+prob27_result
+
+```
+
+
+```{r}
+# Run this cell to check your answers 
+library(pacman)
+p_load(testthat) 
+p_load(tidyverse)
+test_file("project5_tests.R")
+
+```
+
+
+
